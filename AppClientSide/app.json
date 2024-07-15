@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "demo-project",
-    "slug": "demo-project",
+    "name": "AppClientSide",
+    "slug": "AppClientSide",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
