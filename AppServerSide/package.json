@@ -1,0 +1,26 @@
+{
+  "name": "AppServerSide",
+  "version": "1.0.0",
+  "description": "Server Side Of Code For SpotCker Parking Navigation App",
+  "main": "./dist/main.js",
+  "scripts": {
+    "start": "node ./dist/main.js",
+    "build": "npx tsc",
+    "dev": "nodemon ./src/main.ts"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^20.14.8",
+    "nodemon": "^3.1.4",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.5.2"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "mongodb": "^6.7.0"
+  }
+}
