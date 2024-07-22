@@ -1,10 +1,18 @@
 import { Request, Response } from "express";
+import { getAll } from "./Users.model";
 
 /**
  * Retrieves all users from the database.
  */
 export async function getAllUsers(req: Request, res: Response) {
-    res.send('Get All Users');
+   try{
+    
+    let Users = await getAll();
+    res.status(200).json({Users});
+   }
+   catch(error){
+    res.status(500).json({error});
+   }
 }
 
 /**
