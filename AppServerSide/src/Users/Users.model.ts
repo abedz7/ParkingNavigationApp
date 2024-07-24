@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getUsers, AddUser, userUpdate } from "./Users.db";
+import { getUsers, AddUser, userUpdate , deleteUser } from "./Users.db";
 import { User, Car } from "./Users.Type";
 import { hashPassword } from "./Users.utils";
 
@@ -68,4 +68,11 @@ export async function update(
 ) {
     let User: User = { First_Name, Last_Name, Email_adress, Phone_Number, Cars, Password, IsAdmin, HaveDisabledCretificate, IsMom };
     return await userUpdate(_id.toString(), User);
+}
+
+/**
+ * Deletes a user by their unique identifier.
+ */
+export async function deleteUserById(id: string) {
+    return await deleteUser(new ObjectId(id));
 }

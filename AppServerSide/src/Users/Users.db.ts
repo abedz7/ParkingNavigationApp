@@ -55,3 +55,19 @@ export async function userUpdate(id: string, User: User) {
             mongo.close();
     }
 }
+
+// async function to delete a user by id
+export async function deleteUser(id: ObjectId) {
+    let mongo: MongoClient | null = null;
+    try {
+        mongo = new MongoClient(DB_INFO.host);
+        await mongo.connect();
+        return await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).deleteOne({ _id: id });
+    } catch (error) {
+        throw error;
+    } finally {
+        if (mongo != null)
+            mongo.close();
+    }
+}
+

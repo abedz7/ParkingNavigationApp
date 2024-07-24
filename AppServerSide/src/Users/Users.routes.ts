@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword } from '../Users/Users.controller';
+import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword , deleteUser} from '../Users/Users.controller';
 
 const UsersRouter = Router();
 
@@ -17,6 +17,9 @@ UsersRouter.put('/updateUser/:id', updateUser);
 
 // Authenticate a user
 UsersRouter.post('/authenticateUser', authenticateUser);
+
+// Delete a user by ID
+UsersRouter.delete('/deleteUser/:id', deleteUser);
 
 // Handle forgotten password scenario
 UsersRouter.post('/forgotPassword', forgotPassword);

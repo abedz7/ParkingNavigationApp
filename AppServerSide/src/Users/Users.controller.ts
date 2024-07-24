@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAll, getById, createNewUser, update } from "./Users.model";
+import { getAll, getById, createNewUser, update , deleteUserById} from "./Users.model";
 import { ObjectId } from "mongodb";
 import { comparePassword } from "./Users.utils";
 
@@ -70,12 +70,12 @@ export async function updateUser(req: Request, res: Response) {
         } = req.body;
         if (id.length != 24)
             return res.status(403).json({ error: 'Invalid User ID' });
+        if (!Email_adress)
+            return res.status(400).json({ error: 'Email Address is required' });
         if (!First_Name)
             return res.status(400).json({ error: 'First Name is required' });
         if (!Last_Name)
-            return res.status(400).json({ error: 'Last Name is required' });
-        if (!Email_adress)
-            return res.status(400).json({ error: 'Email Address is required' });
+            return res.status(400).json({ error: 'Last Name is required' });       
         if (!Phone_Number)
             return res.status(400).json({ error: 'Phone Number is required' });
         if (!Cars || Cars.length === 0)
@@ -83,7 +83,7 @@ export async function updateUser(req: Request, res: Response) {
         if (!Password)
             return res.status(400).json({ error: 'Password is required' });
 
-        let result = await update(new ObjectId(id), First_Name, Last_Name, Email_adress, Phone_Number, Cars, Password, IsAdmin, HaveDisabledCretificate, IsMom); // Convert id to ObjectId
+        let result = await update(new ObjectId(id), First_Name, Last_Name, Email_adress, Phone_Number, Cars, Password, IsAdmin, HaveDisabledCretificate, IsMom);
 
         if (result.modifiedCount == 0)
             res.status(404).json({ error: 'User Not Found' });
@@ -93,6 +93,7 @@ export async function updateUser(req: Request, res: Response) {
         res.status(500).json({ error });
     }
 }
+
 
 /**
  * Handles user login, typically checks credentials and returns a token.
@@ -119,6 +120,24 @@ export async function authenticateUser(req: Request, res: Response) {
     }
 }
 
+/**
+ * Deletes a user by their unique identifier.
+ */
+export async function deleteUser(req: Request, res: Response) {
+    try {
+        let { id } = req.params;
+        if (id.length != 24)
+            return res.status(403).json({ error: 'Invalid User ID' });
+
+        let result = await deleteUserById(id);
+        if (result.deletedCount === 0)
+            res.status(404).json({ error: 'User Not Found' });
+        else
+            res.status(200).json({ message: 'User Deleted Successfully' });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+}
 /**
  * Initiates a process for users to reset their forgotten passwords.
  */
