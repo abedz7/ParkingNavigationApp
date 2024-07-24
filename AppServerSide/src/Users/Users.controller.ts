@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAll, getById, createNewUser, update , deleteUserById} from "./Users.model";
+import { getAll, getById, createNewUser, update , deleteUserById , updateCars} from "./Users.model";
 import { ObjectId } from "mongodb";
 import { comparePassword } from "./Users.utils";
 
@@ -134,6 +134,26 @@ export async function deleteUser(req: Request, res: Response) {
             res.status(404).json({ error: 'User Not Found' });
         else
             res.status(200).json({ message: 'User Deleted Successfully' });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+}
+
+/**
+ * Updates the cars of a specific user in the database.
+ */
+export async function updateUserCars(req: Request, res: Response) {
+    try {
+        let { id } = req.params;
+        let { Cars } = req.body;
+
+        if (id.length != 24) return res.status(403).json({ error: 'Invalid User ID' });
+        if (!Cars || !Array.isArray(Cars)) return res.status(400).json({ error: 'Cars must be an array' });
+
+        let result = await updateCars(new ObjectId(id), Cars);
+
+        if (result.modifiedCount == 0) res.status(404).json({ error: 'User Not Found' });
+        else res.status(200).json({ result });
     } catch (error) {
         res.status(500).json({ error });
     }

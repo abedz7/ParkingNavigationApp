@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword , deleteUser} from '../Users/Users.controller';
+import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword , deleteUser , updateUserCars} from '../Users/Users.controller';
 
 const UsersRouter = Router();
 
@@ -20,6 +20,9 @@ UsersRouter.post('/authenticateUser', authenticateUser);
 
 // Delete a user by ID
 UsersRouter.delete('/deleteUser/:id', deleteUser);
+
+// Update cars for a specific user
+UsersRouter.put('/updateUserCars/:id', updateUserCars);
 
 // Handle forgotten password scenario
 UsersRouter.post('/forgotPassword', forgotPassword);

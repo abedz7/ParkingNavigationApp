@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { User } from "./Users.Type";
+import { User , Car } from "./Users.Type";
 
 // Data Base Info That we save in a variable
 const DB_INFO = {
@@ -71,3 +71,19 @@ export async function deleteUser(id: ObjectId) {
     }
 }
 
+// async function to update cars of a specific user in the database
+export async function updateUserCarsInDb(id: ObjectId, Cars: Array<Car>) {
+    let mongo: MongoClient | null = null;
+    try {
+        mongo = new MongoClient(DB_INFO.host);
+        await mongo.connect();
+        return await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).updateOne(
+            { _id: id },
+            { $set: { Cars } }
+        );
+    } catch (error) {
+        throw error;
+    } finally {
+        if (mongo != null) mongo.close();
+    }
+}

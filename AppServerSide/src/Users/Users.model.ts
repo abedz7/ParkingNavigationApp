@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { getUsers, AddUser, userUpdate , deleteUser } from "./Users.db";
+import { getUsers, AddUser, userUpdate , deleteUser , updateUserCarsInDb } from "./Users.db";
 import { User, Car } from "./Users.Type";
 import { hashPassword } from "./Users.utils";
 
@@ -75,4 +75,9 @@ export async function update(
  */
 export async function deleteUserById(id: string) {
     return await deleteUser(new ObjectId(id));
+}
+
+// async function to update cars of a specific user in the database
+export async function updateCars(_id: ObjectId, Cars: Array<Car>) {
+    return await updateUserCarsInDb(_id, Cars);
 }
