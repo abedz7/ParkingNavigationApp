@@ -30,8 +30,8 @@ SpotCker is a parking navigation app that allows users to find available parking
 1. Clone the repository:
 
     ```bash
-    git clone https://github.com/your-username/SpotCker.git
-    cd SpotCker
+    https://github.com/abedz7/ParkingNavigationApp.git
+    cd ParkingNavigationApp
     ```
 
 2. Navigate to the backend directory:
