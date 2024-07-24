@@ -1,4 +1,6 @@
 import 'dotenv/config'; // apply env vars
+import dotenv from 'dotenv';
+dotenv.config();
 import express from 'express';
 import UsersRouter from './Users/Users.routes';
 

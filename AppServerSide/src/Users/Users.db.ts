@@ -1,45 +1,57 @@
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import { User } from "./Users.Type";
 
 // Data Base Info That we save in a variable
 const DB_INFO = {
     host: process.env.CONNECTION_STRING as string,
-    db: process.env.DB_NAME,
+    db: process.env.DB_NAME as string,
     Collection: 'Users'
 };
-// async function to get all users , and to get a specefic user by id
+
+// async function to get all users, and to get a specific user by id
 export async function getUsers(query = {}, projection = {}) {
-    
     let mongo: MongoClient | null = null;
     try {
-        mongo = new MongoClient("mongodb+srv://abedz:R8gWCsGnsRWZAT0X@maincluster.hhcpav0.mongodb.net/?retryWrites=true&w=majority&appName=MainCluster");
+        mongo = new MongoClient(DB_INFO.host);
         await mongo.connect();
-        return await mongo.db("SpotCker").collection(DB_INFO.Collection).find({}).toArray();
-    }
-    catch (error) {
-        
-
+        return await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).find(query).project(projection).toArray();
+    } catch (error) {
         throw error;
-    }
-    finally {
+    } finally {
         if (mongo != null)
             mongo.close();
     }
 }
+
 // async function to create a new user in the database
 export async function AddUser(User: User) {
     let mongo: MongoClient | null = null;
     try {
-        mongo = new MongoClient("mongodb+srv://abedz:R8gWCsGnsRWZAT0X@maincluster.hhcpav0.mongodb.net/?retryWrites=true&w=majority&appName=MainCluster");
+        mongo = new MongoClient(DB_INFO.host);
         await mongo.connect();
-        return await mongo.db("SpotCker").collection(DB_INFO.Collection).insertOne(User);
-    }
-    catch (error) {
+        return await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).insertOne(User);
+    } catch (error) {
         throw error;
-    }
-    finally {
+    } finally {
         if (mongo != null)
             mongo.close();
     }
 }
 
+//function to Update an existing user's details in the database
+export async function userUpdate(id: string, User: User) {
+    let mongo: MongoClient | null = null;
+    try {
+        mongo = new MongoClient(DB_INFO.host);
+        await mongo.connect();
+        return await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).updateOne(
+            { _id: new ObjectId(id) },
+            { $set: User }
+        );
+    } catch (error) {
+        throw error;
+    } finally {
+        if (mongo != null)
+            mongo.close();
+    }
+}

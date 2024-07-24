@@ -1,6 +1,6 @@
 import { ObjectId } from "mongodb";
 
-//
+
 export type User = {
     _id?: ObjectId,
     First_Name: string,
@@ -14,7 +14,7 @@ export type User = {
     IsMom:boolean
 }
 
-type Car ={
+export type Car ={
     Company:string,
     Model:string,
     License_Plate:string
