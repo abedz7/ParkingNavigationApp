@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword , deleteUser , updateUserCars} from '../Users/Users.controller';
+import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword , deleteUser , updateUserCars , getUserCars, changeUserPassword} from '../Users/Users.controller';
 
 const UsersRouter = Router();
 
@@ -8,6 +8,9 @@ UsersRouter.get('/getAllUsers', getAllUsers);
 
 // Retrieve a specific user by ID
 UsersRouter.get('/getUserById/:id', getUserById);
+
+// Get cars associated with a specific user by ID
+UsersRouter.get('/getUserCars/:id', getUserCars);
 
 // Create a new user
 UsersRouter.post('/createUser', createUser);
@@ -26,5 +29,9 @@ UsersRouter.put('/updateUserCars/:id', updateUserCars);
 
 // Handle forgotten password scenario
 UsersRouter.post('/forgotPassword', forgotPassword);
+
+// Change user password
+UsersRouter.put('/changePassword/:id', changeUserPassword);
+
 
 export default UsersRouter;

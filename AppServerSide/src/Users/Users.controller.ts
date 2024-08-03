@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
-import { getAll, getById, createNewUser, update , deleteUserById , updateCars} from "./Users.model";
+import { getAll, getById, createNewUser, update , deleteUserById , updateCars , getUserCarsById , handleForgotPassword ,updateUserPassword} from "./Users.model";
 import { ObjectId } from "mongodb";
-import { comparePassword } from "./Users.utils";
+import { comparePassword , hashPassword } from "./Users.HashUtilities";
 
 /**
  * Retrieves all users from the database.
@@ -158,9 +158,66 @@ export async function updateUserCars(req: Request, res: Response) {
         res.status(500).json({ error });
     }
 }
+
+/**
+ * Retrieves the cars associated with a specific user by their ID.
+ */
+export async function getUserCars(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+
+        if (id.length !== 24) {
+            return res.status(403).json({ error: 'Invalid User ID' });
+        }
+
+        const cars = await getUserCarsById(id);
+
+        if (!cars) {
+            return res.status(404).json({ error: 'User or cars not found' });
+        }
+
+        res.status(200).json({ cars });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+}
+
+
 /**
  * Initiates a process for users to reset their forgotten passwords.
  */
 export async function forgotPassword(req: Request, res: Response) {
-    res.send('Password Reset Link Sent');
+    try {
+        const { Email_adress } = req.body;
+        await handleForgotPassword(Email_adress);
+        res.status(200).json({ message: 'Temporary password sent to your email' });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+}
+
+/**
+ * Updates a user's password by their ID.
+ */
+export async function changeUserPassword(req: Request, res: Response) {
+    try {
+        const { id } = req.params;
+        const { Password } = req.body;
+
+        if (id.length !== 24)
+            return res.status(403).json({ error: 'Invalid User ID' });
+
+        if (!Password)
+            return res.status(400).json({ error: 'Password is required' });
+
+        const hashedPassword = await hashPassword(Password);
+        const result = await updateUserPassword(new ObjectId(id), hashedPassword);
+
+        if (result.modifiedCount === 0)
+            res.status(404).json({ error: 'User Not Found' });
+        else
+            res.status(200).json({ message: 'Password updated successfully' });
+    } catch (error) {
+        res.status(500).json({ error });
+    }
 }

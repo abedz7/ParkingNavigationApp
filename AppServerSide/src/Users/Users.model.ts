@@ -1,7 +1,8 @@
 import { ObjectId } from "mongodb";
-import { getUsers, AddUser, userUpdate , deleteUser , updateUserCarsInDb } from "./Users.db";
+import { getUsers, AddUser, userUpdate , deleteUser , updateUserCarsInDb , getCarsByUserIdFromDb , getUserByEmailFromDb ,updateUserPasswordInDb , updatePasswordInDb } from "./Users.db";
 import { User, Car } from "./Users.Type";
-import { hashPassword } from "./Users.utils";
+import { hashPassword } from "./Users.HashUtilities";
+import { sendEmail } from "./Users.EmailUtilities";
 
 /**
  * Retrieves all users from the database.
@@ -80,4 +81,55 @@ export async function deleteUserById(id: string) {
 // async function to update cars of a specific user in the database
 export async function updateCars(_id: ObjectId, Cars: Array<Car>) {
     return await updateUserCarsInDb(_id, Cars);
+}
+
+/**
+ * Retrieves cars associated with a specific user by their ID.
+ * @param id - The user ID.
+ * @returns A promise that resolves to an array of cars or null if not found.
+ */
+export async function getUserCarsById(id: string): Promise<Car[] | null> {
+    return await getCarsByUserIdFromDb(id);
+}
+
+// Model function to handle forgot password logic
+export async function handleForgotPassword(email: string): Promise<void> {
+    // Fetch the user by email
+    const user = await getUserByEmailFromDb(email);
+    if (!user) {
+        throw new Error('Email address not found');
+    }
+
+    // Ensure the user has a valid _id
+    if (!user._id) {
+        throw new Error('User ID is missing');
+    }
+
+    // Generate a temporary password
+    const tempPassword = generateTemporaryPassword();
+
+    // Hash the temporary password
+    const hashedPassword = await hashPassword(tempPassword);
+
+    // Update the user's password in the database
+    await updateUserPasswordInDb(user._id, hashedPassword);
+
+    // Send the temporary password to the user's email
+    await sendEmail(user.Email_adress, tempPassword);
+}
+
+
+
+// Utility function to generate a temporary password
+function generateTemporaryPassword(): string {
+    return Math.random().toString(36).slice(-8); // Simple 8-character password
+}
+
+/**
+ * Updates a user's password in the database.
+ * @param id - The ID of the user whose password is being updated.
+ * @param hashedPassword - The new hashed password.
+ */
+export async function updateUserPassword(id: ObjectId, hashedPassword: string) {
+    return await updatePasswordInDb(id, hashedPassword);
 }
