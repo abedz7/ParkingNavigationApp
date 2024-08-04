@@ -33,3 +33,8 @@ export async function updateParkingLot(id: string, updatedFields: Partial<Parkin
 export async function removeParkingLot(id: string) {
     return await removeParkingLotFromDb(id);
 }
+
+// Get a parking lot by its name
+export async function getParkingLotByName(name: string) {
+    return await getParkingLotsFromDb({ Name: name });
+}

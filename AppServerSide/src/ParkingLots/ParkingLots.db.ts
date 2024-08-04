@@ -65,3 +65,5 @@ export async function removeParkingLotFromDb(id: string) {
         if (mongo != null) mongo.close();
     }
 }
+
+

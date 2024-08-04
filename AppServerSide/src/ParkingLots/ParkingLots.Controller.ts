@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAllParkingLots, getParkingLotById, addParkingLot, updateParkingLot, removeParkingLot } from "./ParkingLots.model";
+import { getAllParkingLots, getParkingLotById, addParkingLot, updateParkingLot, removeParkingLot , getParkingLotByName } from "./ParkingLots.model";
 
 /**
  * Get all parking lots.
@@ -81,6 +81,23 @@ export async function removeParkingLotController(req: Request, res: Response) {
             res.status(404).json({ error: 'Parking Lot Not Found' });
         } else {
             res.status(200).json({ message: 'Parking Lot Deleted Successfully' });
+        }
+    } catch (error) {
+        res.status(500).json({ error });
+    }
+}
+
+/**
+ * Get a parking lot by its name.
+ */
+export async function getParkingLotByNameController(req: Request, res: Response) {
+    try {
+        const { name } = req.params;
+        const parkingLot = await getParkingLotByName(name);
+        if (!parkingLot) {
+            res.status(404).json({ error: 'Parking Lot Not Found' });
+        } else {
+            res.status(200).json({ parkingLot });
         }
     } catch (error) {
         res.status(500).json({ error });

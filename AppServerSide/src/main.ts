@@ -4,6 +4,7 @@ dotenv.config();
 import express from 'express';
 import UsersRouter from './Users/Users.routes';
 import ParkingLotsRouter from './ParkingLots/ParkingLots.routes';
+import parkingSpotsRouter from './ParkingSpots/ParkingSpots.routes';
 
 //config
 //process.env.PORT --> the live server port
@@ -18,6 +19,7 @@ server.use(express.json());
 //using routes
 server.use('/api/Users', UsersRouter);
 server.use('/api/ParkingLots',ParkingLotsRouter)
+server.use('/api/ParkingSpots',parkingSpotsRouter)
 
 //run the server
 server.listen(PORT, () => console.log(`[Server] http://localhost:${PORT}`));
