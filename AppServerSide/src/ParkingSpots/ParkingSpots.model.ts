@@ -1,5 +1,5 @@
 import { ObjectId } from "mongodb";
-import { ParkingSpot } from "./ParkingSpots.type";
+import { ParkingSpot } from "./ParkingSpots.Type";
 import { addParkingSpotToDb, removeParkingSpotFromDb, getParkingSpotsByLotIdFromDb, updateParkingSpotInDb, getParkingSpotsCountByType, addMultipleParkingSpotsToDb, getParkingSpotsByLotNameFromDb } from "./ParkingSpots.db";
 
 // Add a single parking spot
