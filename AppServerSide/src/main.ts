@@ -9,7 +9,7 @@ import ParkingsRouter from './Parkings/Parkings.routes';
 
 //config
 //process.env.PORT --> the live server port
-const PORT = process.env.PORT || 7777; 
+const PORT = process.env.PORT || 10000; 
 
 //create the server
 const server = express();
