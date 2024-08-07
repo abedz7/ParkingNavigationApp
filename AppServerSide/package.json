@@ -1,5 +1,5 @@
 {
-  "name": "AppServerSide",
+  "name": "app-server-side",
   "version": "1.0.0",
   "description": "Server Side Of Code For SpotCker Parking Navigation App",
   "main": "./dist/main.js",
