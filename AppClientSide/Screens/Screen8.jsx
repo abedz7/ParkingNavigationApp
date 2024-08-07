@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
+import { Picker } from '@react-native-picker/picker';
 
 const Screen8 = ({ navigation }) => {
     const [carPlate, setCarPlate] = useState('');
-  
+    const [carData, setCarData] = useState([]);
+    const [selectedBrand, setSelectedBrand] = useState('');
+    const [models, setModels] = useState([]);
+    const [selectedModel, setSelectedModel] = useState('');
+
+    useEffect(() => {
+        // Directly require the JSON file
+        const data = require('../assets/data/carData.json');
+        setCarData(data);
+    }, []);
+
+    const handleBrandChange = (brand) => {
+        setSelectedBrand(brand);
+        const selectedCarBrand = carData.find(car => car.brand === brand);
+        setModels(selectedCarBrand ? selectedCarBrand.models : []);
+        setSelectedModel(''); // Reset model selection when brand changes
+    };
 
     return (
         <View style={styles.container}>
@@ -15,7 +32,7 @@ const Screen8 = ({ navigation }) => {
                     size={24}
                     onPress={() => navigation.goBack()}
                 />
-                <Text style={styles.title}>Add Your Car Plate Number</Text>
+                <Text style={styles.title}>Add Your Car Details</Text>
             </View>
             <View style={styles.stepsContainer}>
                 <View style={[styles.step, styles.activeStep]} />
@@ -25,6 +42,29 @@ const Screen8 = ({ navigation }) => {
                 <View style={styles.step} />
                 <View style={styles.step} />
             </View>
+            <Text style={styles.label}>Car Brand</Text>
+            <Picker
+                selectedValue={selectedBrand}
+                onValueChange={handleBrandChange}
+                style={styles.input}
+            >
+                <Picker.Item label="Select Car Brand" value="" />
+                {carData.map((car) => (
+                    <Picker.Item key={car.brand} label={car.brand} value={car.brand} />
+                ))}
+            </Picker>
+            <Text style={styles.label}>Car Model</Text>
+            <Picker
+                selectedValue={selectedModel}
+                onValueChange={(model) => setSelectedModel(model)}
+                style={styles.input}
+                enabled={models.length > 0}
+            >
+                <Picker.Item label="Select Car Model" value="" />
+                {models.map((model) => (
+                    <Picker.Item key={model} label={model} value={model} />
+                ))}
+            </Picker>
             <Text style={styles.label}>License Plate Number</Text>
             <TextInput
                 mode="outlined"
@@ -54,7 +94,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-        
     },
     backButton: {
         marginTop: 40,
@@ -95,7 +134,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         backgroundColor: '#6FADF5',
         borderRadius: 5,
-
     },
 });
 

@@ -15,7 +15,7 @@ const Screen7 = ({ navigation }) => {
                     size={24}
                     onPress={() => navigation.goBack()}
                 />
-                <Text style={styles.title}>Choose Your Username</Text>
+                <Text style={styles.title}>Add Your Phone Number</Text>
             </View>
             <View style={styles.stepsContainer}>
                 <View style={[styles.step, styles.activeStep]} />
@@ -25,10 +25,10 @@ const Screen7 = ({ navigation }) => {
                 <View style={styles.step} />
                 <View style={styles.step} />
             </View>
-            <Text style={styles.label}>UserName</Text>
+            <Text style={styles.label}>Phone Number</Text>
             <TextInput
                 mode="outlined"
-                placeholder="@example"
+                placeholder="XXX-XXX-XXXX"
                 value={userName}
                 onChangeText={setUserName}
                 style={styles.input}

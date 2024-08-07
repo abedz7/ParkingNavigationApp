@@ -1,14 +1,42 @@
-import React from "react";
-import { useState } from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, { useState } from "react";
+import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Text, Button, TextInput, IconButton } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
+
 const Screen12 = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [Password, setPassword] = useState('');
+    const [password, setPassword] = useState('');
 
-    
+    const handleLogin = async () => {
+        try {
+            const response = await fetch('http://server-url/api/Users/authenticateUser', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Email_adress: email,
+                    Password: password,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                // Handle successful authentication (e.g., store token, navigate to another screen)
+                Alert.alert('Success', 'Authentication successful');
+                navigation.navigate('Screen15');
+            } else {
+                // Handle errors (e.g., user not found, invalid credentials)
+                Alert.alert('Error', data.error || 'Failed to authenticate');
+            }
+        } catch (error) {
+            // Handle network or other errors
+            Alert.alert('Error', 'Something went wrong. Please try again later.');
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -32,7 +60,7 @@ const Screen12 = ({ navigation }) => {
                 <TextInput
                     secureTextEntry={!showPassword}
                     placeholder="Password"
-                    value={Password}
+                    value={password}
                     onChangeText={setPassword}
                     style={styles.inputpass}
                 />
@@ -46,20 +74,20 @@ const Screen12 = ({ navigation }) => {
             <Button
                 mode="contained"
                 style={styles.continueButton}
-                onPress={() => navigation.navigate('Screen15')}               
+                onPress={handleLogin}               
             >
                 Log In
             </Button>
 
             <TouchableOpacity onPress={() => navigation.navigate('Screen13')}>
-          <Text style={styles.loginText}>
-            forgot password? <Text style={styles.loginLink}></Text>
-          </Text>
-        </TouchableOpacity>
+                <Text style={styles.loginText}>
+                    Forgot password? <Text style={styles.loginLink}></Text>
+                </Text>
+            </TouchableOpacity>
         </View>
     );
-
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,

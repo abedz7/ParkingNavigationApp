@@ -1,10 +1,35 @@
-import React from "react";
-import { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState } from "react";
+import { View, StyleSheet, Alert } from 'react-native';
 import { Text, Button, TextInput, IconButton } from 'react-native-paper';
+
 const Screen13 = ({ navigation }) => {
     const [email, setEmail] = useState('');
-   
+
+    const handleForgotPassword = async () => {
+        try {
+            const response = await fetch('http://server-url/api/Users/forgotPassword', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    Email_adress: email,
+                }),
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                Alert.alert('Success', 'Temporary password sent to your email.');
+                navigation.navigate('Screen14'); // Navigate to next screen if necessary
+            } else {
+                Alert.alert('Error', data.error || 'Failed to send temporary password.');
+            }
+        } catch (error) {
+            Alert.alert('Error', 'Something went wrong. Please try again later.');
+        }
+    };
+
     return (
         <View style={styles.container}>
             <View style={styles.header}>
@@ -17,24 +42,25 @@ const Screen13 = ({ navigation }) => {
                 <Text style={styles.title}>Reset Password</Text>
             </View>
             <View style={styles.inputContainer}>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-                placeholder="example@example.com"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.inputmail}
-            />
+                <Text style={styles.label}>Email</Text>
+                <TextInput
+                    placeholder="example@example.com"
+                    value={email}
+                    onChangeText={setEmail}
+                    style={styles.inputmail}
+                />
             </View>
             <Button
                 mode="contained"
                 style={styles.continueButton}
-                onPress={() => navigation.navigate('Screen14')}
+                onPress={handleForgotPassword}
             >
                 Send
             </Button>
         </View>
     );
 };
+
 const styles = StyleSheet.create({
     container: {
         flex: 1,
@@ -62,9 +88,8 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
-
     inputContainer: {
-      marginTop: 30,
+        marginTop: 30,
     },
     inputmail: {
         marginBottom: 20,
@@ -77,7 +102,6 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         backgroundColor: '#6FADF5'
     },
-    
-
 });
+
 export default Screen13;
