@@ -9,7 +9,7 @@ import ParkingsRouter from './Parkings/Parkings.routes';
 
 //config
 //process.env.PORT --> the live server port
-const PORT = process.env.PORT || 10000; 
+const PORT = parseInt(process.env.PORT || '10000', 10);
 
 //create the server
 const server = express();
@@ -23,5 +23,7 @@ server.use('/api/ParkingLots',ParkingLotsRouter)
 server.use('/api/ParkingSpots',parkingSpotsRouter)
 server.use('/api/Parkings',ParkingsRouter)
 
-//run the server
-server.listen(PORT, () => console.log(`[Server] http://localhost:${PORT}`));
+// Run the server
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`[Server] Running at http://0.0.0.0:${PORT}`);
+});
