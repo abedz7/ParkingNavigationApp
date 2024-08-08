@@ -21,6 +21,11 @@ export async function getById(id: string) {
     return User[0]; // Return the first user found
 }
 
+// funtion that retrives a specific user by email
+export async function getUserByEmail(email: string) {
+    return await getUserByEmailFromDb(email);
+}
+
 /**
  * Creates a new user in the database.
  * @param User - The user data to create.

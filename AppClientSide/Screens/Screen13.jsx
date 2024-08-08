@@ -7,7 +7,7 @@ const Screen13 = ({ navigation }) => {
 
     const handleForgotPassword = async () => {
         try {
-            const response = await fetch('http://server-url/api/Users/forgotPassword', {
+            const response = await fetch('https://spotcker.onrender.com/api/Users/forgotPassword', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

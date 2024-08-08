@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getAll, getById, createNewUser, update , deleteUserById , updateCars , getUserCarsById , handleForgotPassword ,updateUserPassword} from "./Users.model";
+import { getAll, getById, createNewUser, update , deleteUserById ,getUserByEmail, updateCars , getUserCarsById , handleForgotPassword ,updateUserPassword} from "./Users.model";
 import { ObjectId } from "mongodb";
 import { comparePassword , hashPassword } from "./Users.HashUtilities";
 
@@ -101,7 +101,7 @@ export async function updateUser(req: Request, res: Response) {
 export async function authenticateUser(req: Request, res: Response) {
     try {
         const { Email_adress, Password } = req.body;
-        const User = await getById(Email_adress); // assuming getById can search by email too
+        const User = await getUserByEmail(Email_adress); // Search by email instead of ID
         if (!User) {
             return res.status(404).json({ error: 'User not found' });
         }
@@ -119,7 +119,6 @@ export async function authenticateUser(req: Request, res: Response) {
         res.status(500).json({ error });
     }
 }
-
 /**
  * Deletes a user by their unique identifier.
  */

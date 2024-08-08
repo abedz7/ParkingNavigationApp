@@ -10,7 +10,7 @@ const Screen12 = ({ navigation }) => {
 
     const handleLogin = async () => {
         try {
-            const response = await fetch('http://server-url/api/Users/authenticateUser', {
+            const response = await fetch('https://spotcker.onrender.com/api/Users/authenticateUser', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
