@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node ./dist/main.js",
     "build": "npx tsc",
-    "dev": "nodemon ./src/main.ts"
+    "dev": "nodemon ./src/main.ts",
+    "prestart": "npm run build"
   },
   "keywords": [],
   "author": "Abed Jaber",
