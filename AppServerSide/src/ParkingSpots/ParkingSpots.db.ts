@@ -1,5 +1,5 @@
 import { MongoClient, ObjectId } from "mongodb";
-import { ParkingSpot } from "./ParkingSpots.Type";
+import { ParkingSpot } from "./ParkingSpots.type";
 const DB_INFO = {
     host: process.env.CONNECTION_STRING as string,
     db: process.env.DB_NAME as string,
