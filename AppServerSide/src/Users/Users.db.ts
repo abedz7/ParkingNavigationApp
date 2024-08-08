@@ -121,8 +121,12 @@ export async function getUserByEmailFromDb(email: string): Promise<User | null> 
     try {
         mongo = new MongoClient(DB_INFO.host);
         await mongo.connect();
-        const user = await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).findOne({ Email_adress: email });
-        return user as User | null; 
+        const user = await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).findOne({ Email_adress: email.toLowerCase() });
+
+        if (user) {
+            return user as User;
+        }
+        return null;
     } catch (error) {
         throw error;
     } finally {

@@ -35,7 +35,7 @@ export async function createNewUser(User: User) {
     let newUser: User = {
         _id: new ObjectId(),
         First_Name: User.First_Name,
-        Email_adress: User.Email_adress,
+        Email_adress: User.Email_adress.toLowerCase(), // Convert email to lowercase
         Password: hashedPassword,
         Last_Name: User.Last_Name,
         Phone_Number: User.Phone_Number,
@@ -72,7 +72,18 @@ export async function update(
     HaveDisabledCretificate: boolean,
     IsMom: boolean
 ) {
-    let User: User = { First_Name, Last_Name, Email_adress, Phone_Number, Cars, Password, IsAdmin, HaveDisabledCretificate, IsMom };
+    let hashedPassword = await hashPassword(Password);
+    let User: User = { 
+        First_Name, 
+        Last_Name, 
+        Email_adress: Email_adress.toLowerCase(), // Convert email to lowercase
+        Phone_Number, 
+        Cars, 
+        Password: hashedPassword, // Hash the password before updating
+        IsAdmin, 
+        HaveDisabledCretificate, 
+        IsMom 
+    };
     return await userUpdate(_id.toString(), User);
 }
 

@@ -100,8 +100,10 @@ export async function updateUser(req: Request, res: Response) {
  */
 export async function authenticateUser(req: Request, res: Response) {
     try {
-        const { Email_adress, Password } = req.body;
-        const User = await getUserByEmail(Email_adress); // Search by email instead of ID
+        const Email_adress = req.body.Email_adress.toLowerCase(); // Convert email to lowercase
+        const Password = req.body.Password;
+
+        const User = await getUserByEmail(Email_adress); // Search by email
         if (!User) {
             return res.status(404).json({ error: 'User not found' });
         }
