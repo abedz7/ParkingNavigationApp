@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Image } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 
-const Screen11 = ({ navigation }) => {
+const CreateSuccess = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Image
@@ -54,4 +54,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen11;
+export default CreateSuccess;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Button, IconButton } from 'react-native-paper';
 
-const Screen9 = ({ navigation }) => {
+const MomSignUp = ({ navigation }) => {
     const [selectedOption, setSelectedOption] = useState('');
 
     return (
@@ -15,11 +15,12 @@ const Screen9 = ({ navigation }) => {
                     onPress={() => navigation.goBack()}
                 />
                 <Text style={styles.title}>
-                    Do You Have a Disabled Person
-                    Certificate For Your Car?
+                    Do You Have a Child Under 
+                    5 Years Old ?
                 </Text>
             </View>
             <View style={styles.stepsContainer}>
+                <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
@@ -55,8 +56,8 @@ const Screen9 = ({ navigation }) => {
                 mode="contained"
                 style={styles.nextButton}
                 onPress={() => {
-                    // Navigate to the next screen and pass the selected option
-                    navigation.navigate('Screen10', { selectedOption });
+                    
+                    navigation.navigate('PasswordSignUp', { selectedOption });
                 }}
             >
                 Next
@@ -85,6 +86,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         marginTop: 50,
+        width: '80%',  // Reduce the width to allow wrapping
+        alignSelf: 'center',  // Center the title horizontally
+        lineHeight: 24,  // Adjust line height for better readability
     },
     stepsContainer: {
         flexDirection: 'row',
@@ -142,4 +146,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen9;
+export default MomSignUp;

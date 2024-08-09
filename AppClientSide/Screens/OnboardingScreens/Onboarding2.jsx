@@ -4,7 +4,7 @@ import { View, StyleSheet, Image } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 
-const Screen3 = ({ navigation }) => {
+const Onboarding2 = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.upperSection}>
@@ -26,7 +26,7 @@ const Screen3 = ({ navigation }) => {
         <Button
           mode="contained"
           style={styles.nextButton}
-          onPress={() => navigation.navigate('Screen4')}
+          onPress={() => navigation.navigate('OnboardingWelcome')}
         >
           <Icon name="arrow-forward" size={20} color="#fff" />
         </Button>
@@ -38,7 +38,7 @@ const Screen3 = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6FADF5', // Ensure the background color is dark for white text contrast
+    backgroundColor: '#6FADF5', 
   },
   upperSection: {
     flex: 2,
@@ -89,7 +89,7 @@ const styles = StyleSheet.create({
     margin: 5,
   },
   nextButton: {
-    backgroundColor: '#1E90FF', // Customize your button color
+    backgroundColor: '#1E90FF', 
     borderRadius: 50,
     width: 50,
     height: 50,
@@ -99,4 +99,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Screen3;
+export default Onboarding2;

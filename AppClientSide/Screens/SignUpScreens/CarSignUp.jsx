@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
 
-const Screen8 = ({ navigation }) => {
+const CarSignUp = ({ navigation }) => {
     const [carPlate, setCarPlate] = useState('');
     const [carData, setCarData] = useState([]);
     const [selectedBrand, setSelectedBrand] = useState('');
@@ -41,6 +41,7 @@ const Screen8 = ({ navigation }) => {
                 <View style={[styles.step, styles.activeStep]} />
                 <View style={styles.step} />
                 <View style={styles.step} />
+                <View style={styles.step} />
             </View>
             <Text style={styles.label}>Car Brand</Text>
             <Picker
@@ -76,7 +77,7 @@ const Screen8 = ({ navigation }) => {
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('Screen9')} 
+                onPress={() => navigation.navigate('DisabledSignUp')} 
             >
                 Next
             </Button>
@@ -137,4 +138,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen8;
+export default CarSignUp;

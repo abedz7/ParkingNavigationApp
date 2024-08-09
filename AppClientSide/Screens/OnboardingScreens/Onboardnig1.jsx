@@ -5,7 +5,7 @@ import { Text, Button } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { AntDesign } from '@expo/vector-icons';
 
-const Screen2 = ({ navigation }) => {
+const Onboardnig1 = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.upperSection}>
@@ -26,7 +26,7 @@ const Screen2 = ({ navigation }) => {
         <Button
           mode="contained"
           style={styles.nextButton}
-          onPress={() => navigation.navigate('Screen3')}
+          onPress={() => navigation.navigate('Onboarding2')}
         >
         </Button>
           <Icon name="arrow-forward" size={20} color="#fff" />
@@ -39,7 +39,7 @@ const Screen2 = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6FADF5', // Ensure the background color is dark for white text contrast
+    backgroundColor: '#6FADF5', 
   },
   upperSection: {
     flex: 2,
@@ -100,4 +100,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Screen2;
+export default Onboardnig1;

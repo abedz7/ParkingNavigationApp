@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
-const Screen7 = ({ navigation }) => {
-    const [userName, setUserName] = useState('');
-  
+const NamesSignUp = ({ navigation }) => {
+    const [firstName, setFirstName] = useState('');
+    const [lastName, setLastName] = useState('');
 
     return (
         <View style={styles.container}>
@@ -15,29 +15,35 @@ const Screen7 = ({ navigation }) => {
                     size={24}
                     onPress={() => navigation.goBack()}
                 />
-                <Text style={styles.title}>Add Your Phone Number</Text>
+                <Text style={styles.title}>Add Your First & Last Name</Text>
             </View>
             <View style={styles.stepsContainer}>
                 <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
+                <View style={styles.step} />
+                <View style={styles.step} />
                 <View style={styles.step} />
                 <View style={styles.step} />
                 <View style={styles.step} />
             </View>
-            <Text style={styles.label}>Phone Number</Text>
+            <Text style={styles.label}>First Name</Text>
             <TextInput
-                mode="outlined"
-                placeholder="XXX-XXX-XXXX"
-                value={userName}
-                onChangeText={setUserName}
+                mode="outlined"               
+                value={firstName}
+                onChangeText={setFirstName}
                 style={styles.input}
             />
-            
+            <Text style={styles.label}>Last Name</Text>
+            <TextInput
+                mode="outlined"             
+                value={lastName}
+                onChangeText={setLastName}
+                style={styles.input}
+            />
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('Screen8')} 
+                onPress={() => navigation.navigate('PhoneSignUp')} 
             >
                 Next
             </Button>
@@ -66,14 +72,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         marginTop: 50,
-        marginLeft: 10,
+        marginLeft: 5,
     },
     stepsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '80%',
         marginBottom: 20,
-        marginLeft: 40,
+        marginLeft: 45,
     },
     step: {
         width: 40,
@@ -100,4 +106,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen7;
+export default NamesSignUp;

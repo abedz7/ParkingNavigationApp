@@ -3,7 +3,7 @@ import { View, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { Text, Button, TextInput, IconButton } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons';
 
-const Screen12 = ({ navigation }) => {
+const LogIn = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [password, setPassword] = useState('');
@@ -26,7 +26,7 @@ const Screen12 = ({ navigation }) => {
             if (response.ok) {
                 // Handle successful authentication (e.g., store token, navigate to another screen)
                 Alert.alert('Success', 'Authentication successful');
-                navigation.navigate('Screen15');
+                navigation.navigate('HomeMap');
             } else {
                 // Handle errors (e.g., user not found, invalid credentials)
                 Alert.alert('Error', data.error || 'Failed to authenticate');
@@ -79,7 +79,7 @@ const Screen12 = ({ navigation }) => {
                 Log In
             </Button>
 
-            <TouchableOpacity onPress={() => navigation.navigate('Screen13')}>
+            <TouchableOpacity onPress={() => navigation.navigate('ForgotPassword')}>
                 <Text style={styles.loginText}>
                     Forgot password? <Text style={styles.loginLink}></Text>
                 </Text>
@@ -156,4 +156,4 @@ textAlign: 'center',
     }
 
 });
-export default Screen12;
+export default LogIn;

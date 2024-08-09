@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-const Screen20 = () => {
+const Profile = () => {
   return (
     <View style={styles.container}>
       <View style={styles.contentContainer}>
@@ -84,4 +84,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Screen20;
+export default Profile;

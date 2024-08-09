@@ -3,7 +3,7 @@ import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Text, Button, IconButton } from 'react-native-paper';
 import { Feather } from '@expo/vector-icons'; 
 
-const Screen10 = ({ navigation }) => {
+const PasswordSignUp = ({ navigation }) => {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
@@ -28,6 +28,7 @@ const Screen10 = ({ navigation }) => {
                 <Text style={styles.title}>Add Your Password</Text>
             </View>
             <View style={styles.stepsContainer}>
+                <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
                 <View style={[styles.step, styles.activeStep]} />
@@ -148,4 +149,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen10;
+export default PasswordSignUp;

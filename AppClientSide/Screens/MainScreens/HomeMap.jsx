@@ -5,10 +5,10 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconButton } from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Location from 'expo-location';
-import Screen16 from '../Screens/Screen16'; // Parkings Screen
-import Screen19 from '../Screens/Screen19'; // Notifications Screen
-import Screen20 from '../Screens/Screen20'; // Profile Screen
-import ParkingIcon from '../Components/ParkingIcon'; // Import the ParkingIcon component
+import Parkings from './Screens/MainScreens/Parkings';
+import Screen19 from './Screens/MainScreens/Screen19';
+import Profile from './Screens/MainScreens/Profile';
+import ParkingIcon from '../../Components/ParkingIcon'; 
 import { Marker } from 'react-native-maps';
 
 const Tab = createBottomTabNavigator();
@@ -91,14 +91,14 @@ function HomeTabs() {
       })}
     >
       <Tab.Screen name="Location" component={LocationScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Parkings" component={Screen16} options={{ headerShown: false }} />
+      <Tab.Screen name="Parkings" component={Parkings} options={{ headerShown: false }} />
       <Tab.Screen name="Notifications" component={Screen19} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={Screen20} options={{ headerShown: false }} />
+      <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
     </Tab.Navigator>
   );
 }
 
-const Screen15 = ({ navigation }) => {
+const HomeMap = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <HomeTabs />
@@ -126,4 +126,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Screen15;
+export default HomeMap;

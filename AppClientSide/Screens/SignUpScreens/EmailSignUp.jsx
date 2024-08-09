@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
-const Screen6 = ({ navigation }) => {
-    const [firstName, setFirstName] = useState('');
-    const [lastName, setLastName] = useState('');
+const EmailSignUp = ({ navigation }) => {
+    const [email, setEmail] = useState('');
+    const [confirmEmail, setConfirmEmail] = useState('');
 
     return (
         <View style={styles.container}>
@@ -15,34 +15,37 @@ const Screen6 = ({ navigation }) => {
                     size={24}
                     onPress={() => navigation.goBack()}
                 />
-                <Text style={styles.title}>Add Your First & Last Name</Text>
+                <Text style={styles.title}>Add Your Email</Text>
             </View>
             <View style={styles.stepsContainer}>
                 <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
+                <View style={styles.step} />
+                <View style={styles.step} />
                 <View style={styles.step} />
                 <View style={styles.step} />
                 <View style={styles.step} />
                 <View style={styles.step} />
             </View>
-            <Text style={styles.label}>First Name</Text>
+            <Text style={styles.label}>Email</Text>
             <TextInput
-                mode="outlined"               
-                value={firstName}
-                onChangeText={setFirstName}
+                mode="outlined"
+                placeholder="example@example.com"
+                value={email}
+                onChangeText={setEmail}
                 style={styles.input}
             />
-            <Text style={styles.label}>Last Name</Text>
+            <Text style={styles.label}>Confirm Email</Text>
             <TextInput
-                mode="outlined"             
-                value={lastName}
-                onChangeText={setLastName}
+                mode="outlined"
+                placeholder="example@example.com"
+                value={confirmEmail}
+                onChangeText={setConfirmEmail}
                 style={styles.input}
             />
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('Screen7')} 
+                onPress={() => navigation.navigate('NamesSignUp')} 
             >
                 Next
             </Button>
@@ -71,14 +74,14 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         marginTop: 50,
-        marginLeft: 5,
+        marginLeft: 50,
     },
     stepsContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         width: '80%',
         marginBottom: 20,
-        marginLeft: 45,
+        marginLeft: 39,
     },
     step: {
         width: 40,
@@ -105,4 +108,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen6;
+export default EmailSignUp;

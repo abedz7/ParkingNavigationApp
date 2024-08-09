@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, StyleSheet, Text } from 'react-native';
 
-const Screen16 = () => {
+const Parkings = () => {
   return (
     <View>
       
@@ -13,4 +13,4 @@ const styles = StyleSheet.create({
  
 });
 
-export default Screen16;
+export default Parkings;

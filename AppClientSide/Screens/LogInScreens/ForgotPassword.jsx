@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, Alert } from 'react-native';
 import { Text, Button, TextInput, IconButton } from 'react-native-paper';
 
-const Screen13 = ({ navigation }) => {
+const ForgotPassword = ({ navigation }) => {
     const [email, setEmail] = useState('');
 
     const handleForgotPassword = async () => {
@@ -104,4 +104,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default Screen13;
+export default ForgotPassword;

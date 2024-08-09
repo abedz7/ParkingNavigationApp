@@ -2,7 +2,7 @@ import React from "react";
 import { useState } from 'react';
 import { View, StyleSheet , Image } from 'react-native';
 import { Text, Button,  IconButton } from 'react-native-paper';
-const Screen14 = ({ navigation }) => {
+const ForgotConfirm = ({ navigation }) => {
    
     return (
         <View style={styles.container}>
@@ -95,4 +95,4 @@ const styles = StyleSheet.create({
     
 
 });
-export default Screen14;
+export default ForgotConfirm;

@@ -2,7 +2,7 @@ import React from 'react';
 import { View, StyleSheet, Image, TouchableOpacity } from 'react-native';
 import { Text, Button } from 'react-native-paper';
 
-const Screen4 = ({ navigation }) => {
+const OnboardingWelcome = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.imageContainer}>
@@ -20,11 +20,11 @@ const Screen4 = ({ navigation }) => {
           mode="contained"
           style={styles.createAccountButton}
           labelStyle={styles.createAccountButtonText}
-          onPress={() => navigation.navigate('Screen5')}
+          onPress={() => navigation.navigate('EmailSignUp')}
         >
           Create Account
         </Button>
-        <TouchableOpacity onPress={() => navigation.navigate('Screen12')}>
+        <TouchableOpacity onPress={() => navigation.navigate('LogIn')}>
           <Text style={styles.loginText}>
             Already Have An Account? <Text style={styles.loginLink}>Log In</Text>
           </Text>
@@ -94,4 +94,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Screen4;
+export default OnboardingWelcome;
