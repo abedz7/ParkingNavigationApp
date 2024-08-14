@@ -6,7 +6,7 @@ const CreateSuccess = ({ navigation }) => {
     return (
         <View style={styles.container}>
             <Image
-                source={require('../assets/images/Success2.png')} 
+                source={require('../../assets/images/Success2.png')} 
                 style={styles.icon}
             />
             <Text style={styles.title}>Your account was successfully created!</Text>

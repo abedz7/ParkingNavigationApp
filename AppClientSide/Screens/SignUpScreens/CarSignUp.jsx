@@ -12,7 +12,7 @@ const CarSignUp = ({ navigation }) => {
 
     useEffect(() => {
         // Directly require the JSON file
-        const data = require('../assets/data/carData.json');
+        const data = require('../../assets/data/carData.json');
         setCarData(data);
     }, []);
 

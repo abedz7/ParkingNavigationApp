@@ -8,7 +8,7 @@ const Profile = () => {
       <View style={styles.contentContainer}>
 
         <View style={styles.userInfo}>
-          <Image source={require('../assets/images/abed.jpg')} style={styles.avatar} />
+          <Image source={require('../../assets/images/abed.jpg')} style={styles.avatar} />
           <Text style={styles.name}>Abed Jaber</Text>
           <Text style={styles.location}>Taybe, Israel</Text>
         </View>

@@ -5,9 +5,9 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconButton } from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Location from 'expo-location';
-import Parkings from './Screens/MainScreens/Parkings';
-import Screen19 from './Screens/MainScreens/Screen19';
-import Profile from './Screens/MainScreens/Profile';
+import Parkings from '../MainScreens/Parkings';
+import Screen19 from '../MainScreens/Screen19';
+import Profile from '../MainScreens/Profile';
 import ParkingIcon from '../../Components/ParkingIcon'; 
 import { Marker } from 'react-native-maps';
 

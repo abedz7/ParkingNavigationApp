@@ -21,7 +21,7 @@ const ForgotPassword = ({ navigation }) => {
 
             if (response.ok) {
                 Alert.alert('Success', 'Temporary password sent to your email.');
-                navigation.navigate('Screen14'); // Navigate to next screen if necessary
+                navigation.navigate('ForgotConfirm'); // Navigate to next screen if necessary
             } else {
                 Alert.alert('Error', data.error || 'Failed to send temporary password.');
             }

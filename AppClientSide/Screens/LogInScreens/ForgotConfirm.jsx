@@ -16,7 +16,7 @@ const ForgotConfirm = ({ navigation }) => {
                 <Text style={styles.title}>Reset Password</Text>
             </View>
             <Image
-                source={require('../assets/images/Password.png')} 
+                source={require('../../assets/images/Password.png')} 
                 style={styles.icon}
             />
             <Text style={styles.message}>
@@ -26,7 +26,7 @@ const ForgotConfirm = ({ navigation }) => {
             <Button
                 mode="contained"
                 style={styles.continueButton}
-                onPress={() => navigation.navigate('Screen12')}
+                onPress={() => navigation.navigate('LogIn')}
             >
                 Back to login
             </Button>
