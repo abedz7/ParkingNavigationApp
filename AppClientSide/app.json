@@ -12,8 +12,10 @@
       "backgroundColor": "#6FADF5"
     },
     "ios": {
-      "supportsTablet": true
-      
+      "supportsTablet": true,
+      "infoPlist": {
+        "NSPhotoLibraryUsageDescription": "SpotCker needs access to your photo library to upload an image of your car."
+      }
     },
     "android": {
       "adaptiveIcon": {

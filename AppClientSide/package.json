@@ -1,5 +1,5 @@
 {
-  "name": "AppClientSide",
+  "name": "app-client-side",
   "version": "1.0.0",
   "main": "expo/AppEntry.js",
   "scripts": {
@@ -16,13 +16,16 @@
     "@react-navigation/material-top-tabs": "^6.6.13",
     "@react-navigation/native": "^6.1.17",
     "@react-navigation/native-stack": "^6.9.26",
+    "axios": "^1.7.4",
     "expo": "~51.0.11",
+    "expo-image-picker": "^15.0.7",
     "expo-location": "~17.0.1",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
     "react-native": "0.74.2",
     "react-native-geolocation-service": "^5.3.1",
     "react-native-gesture-handler": "^2.17.1",
+    "react-native-image-picker": "^7.1.2",
     "react-native-maps": "^1.15.6",
     "react-native-paper": "^5.12.3",
     "react-native-reanimated": "^3.12.1",

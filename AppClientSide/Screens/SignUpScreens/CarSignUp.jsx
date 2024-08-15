@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native'; 
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 import { Picker } from '@react-native-picker/picker';
+import * as ImagePicker from 'expo-image-picker';
+import axios from 'axios';
 
 const CarSignUp = ({ navigation }) => {
     const [carPlate, setCarPlate] = useState('');
@@ -9,6 +11,7 @@ const CarSignUp = ({ navigation }) => {
     const [selectedBrand, setSelectedBrand] = useState('');
     const [models, setModels] = useState([]);
     const [selectedModel, setSelectedModel] = useState('');
+    const [selectedImage, setSelectedImage] = useState(null);
 
     useEffect(() => {
         // Directly require the JSON file
@@ -21,6 +24,71 @@ const CarSignUp = ({ navigation }) => {
         const selectedCarBrand = carData.find(car => car.brand === brand);
         setModels(selectedCarBrand ? selectedCarBrand.models : []);
         setSelectedModel(''); // Reset model selection when brand changes
+    };
+
+    const requestPhotoPermission = async () => {
+        try {
+            const granted = await PermissionsAndroid.request(
+                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
+                {
+                    title: 'SpotCker Photo Access Permission',
+                    message:
+                        'SpotCker needs access to your photo library ' +
+                        'so you can upload an image of your car.',
+                    buttonNeutral: 'Ask Me Later',
+                    buttonNegative: 'Cancel',
+                    buttonPositive: 'OK',
+                }
+            );
+            return granted === PermissionsAndroid.RESULTS.GRANTED;
+        } catch (err) {
+            console.warn(err);
+            return false;
+        }
+    };
+
+    const handleImageUpload = async () => {
+        const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
+        if (result.granted === false) {
+            alert('Permission to access media library is required!');
+            return;
+        }
+    
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 1,
+        });
+    
+        if (!pickerResult.cancelled) {
+            setSelectedImage(pickerResult.uri);
+            extractLicensePlate(pickerResult);
+        }
+    };
+
+    const extractLicensePlate = async (image) => {
+        const formData = new FormData();
+        formData.append('file', {
+            uri: image.uri,
+            name: 'car_image.jpg',
+            type: 'image/jpeg'
+        });
+
+        try {
+            const response = await axios.post('https://license-extractor.onrender.com/upload-image/', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
+            if (response.data['Detected License Plate Text']) {
+                setCarPlate(response.data['Detected License Plate Text']);
+            } else {
+                console.log('License plate not detected');
+            }
+        } catch (error) {
+            console.error('Error uploading image:', error);
+        }
     };
 
     return (
@@ -67,17 +135,25 @@ const CarSignUp = ({ navigation }) => {
                 ))}
             </Picker>
             <Text style={styles.label}>License Plate Number</Text>
-            <TextInput
-                mode="outlined"
-                placeholder="XX-XXX-XX / XXX-XX-XXX"
-                value={carPlate}
-                onChangeText={setCarPlate}
-                style={styles.input}
-            />           
+            <View style={styles.plateInputContainer}>
+                <TextInput
+                    mode="outlined"
+                    placeholder="XX-XXX-XX / XXX-XX-XXX"
+                    value={carPlate}
+                    onChangeText={setCarPlate}
+                    style={styles.input}
+                />
+                <TouchableOpacity onPress={handleImageUpload}>
+                    <Image
+                        source={require('../../assets/images/abed.jpg')} 
+                        style={styles.photoIcon}
+                    />
+                </TouchableOpacity>
+            </View>
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('DisabledSignUp')} 
+                onPress={() => navigation.navigate('DisabledSignUp')}
             >
                 Next
             </Button>
@@ -128,8 +204,18 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 10,
     },
+    plateInputContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
     input: {
+        flex: 1,
         marginBottom: 20,
+    },
+    photoIcon: {
+        width: 30,
+        height: 30,
+        marginLeft: 10,
     },
     nextButton: {
         marginTop: 20,
