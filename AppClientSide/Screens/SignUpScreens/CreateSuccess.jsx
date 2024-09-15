@@ -14,7 +14,7 @@ const CreateSuccess = ({ navigation }) => {
             <Button
                 mode="contained"
                 style={styles.loginButton}
-                onPress={() => navigation.navigate('Screen12')}
+                onPress={() => navigation.navigate('LogIn')}
             >
                 Log in
             </Button>

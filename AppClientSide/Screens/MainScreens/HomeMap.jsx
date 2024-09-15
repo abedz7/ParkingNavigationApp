@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Text } from 'react-native';
-import MapView from 'react-native-maps';
+import { View, StyleSheet, Text, ActivityIndicator } from 'react-native';
+import MapView, { Marker } from 'react-native-maps';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconButton } from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -8,8 +8,7 @@ import * as Location from 'expo-location';
 import Parkings from '../MainScreens/Parkings';
 import Screen19 from '../MainScreens/Screen19';
 import Profile from '../MainScreens/Profile';
-import ParkingIcon from '../../Components/ParkingIcon'; 
-import { Marker } from 'react-native-maps';
+import ParkingIcon from '../../Components/ParkingIcon';
 
 const Tab = createBottomTabNavigator();
 
@@ -54,7 +53,11 @@ const LocationScreen = ({ navigation }) => {
         </MapView>
       ) : (
         <View style={styles.centered}>
-          <Text>{errorMsg ? errorMsg : 'Loading...'}</Text>
+          {errorMsg ? (
+            <Text>{errorMsg}</Text>  
+          ) : (
+            <ActivityIndicator size="large" color="#6FADF5" />
+          )}
         </View>
       )}
       <IconButton
@@ -67,7 +70,7 @@ const LocationScreen = ({ navigation }) => {
   );
 };
 
-function HomeTabs() {
+function HomeTabs({ user }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -91,17 +94,24 @@ function HomeTabs() {
       })}
     >
       <Tab.Screen name="Location" component={LocationScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Parkings" component={Parkings} options={{ headerShown: false }} />
+      <Tab.Screen name="Parkings" component={Parkings} options={{ headerShown: false }}/>            
       <Tab.Screen name="Notifications" component={Screen19} options={{ headerShown: false }} />
-      <Tab.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="Profile"
+        component={Profile} // Properly pass the Profile component
+        initialParams={{ user }}  // Pass user as initial params
+        options={{ headerShown: false }}
+      />
     </Tab.Navigator>
   );
 }
 
-const HomeMap = ({ navigation }) => {
+const HomeMap = ({ route }) => {
+  const { user } = route.params; // Get user data from login
+
   return (
     <View style={styles.container}>
-      <HomeTabs />
+      <HomeTabs user={user} />  {/* Pass user data to HomeTabs */}
     </View>
   );
 };

@@ -1,55 +1,64 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
 const EmailSignUp = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [confirmEmail, setConfirmEmail] = useState('');
 
+    const isNextButtonDisabled = !email || !confirmEmail;
+
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <IconButton
-                    icon="arrow-left"
-                    style={styles.backButton}
-                    size={24}
-                    onPress={() => navigation.goBack()}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <IconButton
+                        icon="arrow-left"
+                        style={styles.backButton}
+                        size={24}
+                        onPress={() => navigation.goBack()}
+                    />
+                    <Text style={styles.title}>Add Your Email</Text>
+                </View>
+                <View style={styles.stepsContainer}>
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                </View>
+                <TextInput
+                    label="Email"
+                    value={email}
+                    onChangeText={setEmail}
+                    mode="outlined"
+                    placeholder="example@example.com"
+                    style={styles.input}
+                    outlineColor="#6FADF5"
+                    activeOutlineColor="#6FADF5"
                 />
-                <Text style={styles.title}>Add Your Email</Text>
+                <TextInput
+                    label="Confirm Email"
+                    value={confirmEmail}
+                    onChangeText={setConfirmEmail}
+                    mode="outlined"
+                    placeholder="example@example.com"
+                    style={styles.input}
+                    outlineColor="#6FADF5"
+                    activeOutlineColor="#6FADF5"
+                />
+                <Button
+                    mode="contained"
+                    style={styles.nextButton}
+                    onPress={() => navigation.navigate('NamesSignUp', { email, confirmEmail })}
+                    disabled={isNextButtonDisabled}
+                >
+                    Next
+                </Button>
             </View>
-            <View style={styles.stepsContainer}>
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-            </View>
-            <Text style={styles.label}>Email</Text>
-            <TextInput
-                mode="outlined"
-                placeholder="example@example.com"
-                value={email}
-                onChangeText={setEmail}
-                style={styles.input}
-            />
-            <Text style={styles.label}>Confirm Email</Text>
-            <TextInput
-                mode="outlined"
-                placeholder="example@example.com"
-                value={confirmEmail}
-                onChangeText={setConfirmEmail}
-                style={styles.input}
-            />
-            <Button
-                mode="contained"
-                style={styles.nextButton}
-                onPress={() => navigation.navigate('NamesSignUp')} 
-            >
-                Next
-            </Button>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -63,7 +72,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-        
     },
     backButton: {
         marginTop: 40,
@@ -92,19 +100,14 @@ const styles = StyleSheet.create({
     activeStep: {
         backgroundColor: '#6FADF5',
     },
-    label: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
-    },
     input: {
         marginBottom: 20,
+        backgroundColor: '#fff',
     },
     nextButton: {
         marginTop: 20,
         backgroundColor: '#6FADF5',
         borderRadius: 5,
-
     },
 });
 

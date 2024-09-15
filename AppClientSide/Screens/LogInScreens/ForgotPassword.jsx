@@ -1,11 +1,13 @@
 import React, { useState } from "react";
-import { View, StyleSheet, Alert } from 'react-native';
-import { Text, Button, TextInput, IconButton } from 'react-native-paper';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, Button, TextInput, IconButton, ActivityIndicator } from 'react-native-paper';
 
 const ForgotPassword = ({ navigation }) => {
     const [email, setEmail] = useState('');
+    const [loading, setLoading] = useState(false);  
 
     const handleForgotPassword = async () => {
+        setLoading(true);  
         try {
             const response = await fetch('https://spotcker.onrender.com/api/Users/forgotPassword', {
                 method: 'POST',
@@ -19,45 +21,66 @@ const ForgotPassword = ({ navigation }) => {
 
             const data = await response.json();
 
+            setLoading(false);  
+
             if (response.ok) {
-                Alert.alert('Success', 'Temporary password sent to your email.');
-                navigation.navigate('ForgotConfirm'); // Navigate to next screen if necessary
+                navigation.navigate('ForgotConfirm');
             } else {
-                Alert.alert('Error', data.error || 'Failed to send temporary password.');
+                console.error(data.error || 'Failed to send temporary password.');
             }
         } catch (error) {
-            Alert.alert('Error', 'Something went wrong. Please try again later.');
+            setLoading(false);  
+            console.error('Error:', error);
         }
     };
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <IconButton
-                    icon="arrow-left"
-                    style={styles.backButton}
-                    size={24}
-                    onPress={() => navigation.goBack()}
-                />
-                <Text style={styles.title}>Reset Password</Text>
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <IconButton
+                        icon="arrow-left"
+                        style={styles.backButton}
+                        size={24}
+                        onPress={() => navigation.goBack()}
+                    />
+                    <Text style={styles.title}>Reset Password</Text>
+                </View>
+
+                <Text style={styles.instructionText}>
+                    Enter your email to get a new temporary password.
+                </Text>
+
+                <View style={styles.inputContainer}>
+                    <TextInput
+                        label="Email"
+                        placeholder="example@example.com"
+                        value={email}
+                        onChangeText={setEmail}
+                        mode="outlined"
+                        style={styles.input}
+                        outlineColor="#6FADF5"
+                        activeOutlineColor="#6FADF5"
+                    />
+                </View>
+
+                <Button
+                    mode="contained"
+                    style={styles.continueButton}
+                    onPress={handleForgotPassword}
+                    disabled={!email || loading}  
+                >
+                    {loading ? 'Sending...' : 'Send'}
+                </Button>
+
+                {loading && (
+                    <View style={styles.loaderContainer}>
+                        <ActivityIndicator animating={true} color="#6FADF5" />
+                        
+                    </View>
+                )}
             </View>
-            <View style={styles.inputContainer}>
-                <Text style={styles.label}>Email</Text>
-                <TextInput
-                    placeholder="example@example.com"
-                    value={email}
-                    onChangeText={setEmail}
-                    style={styles.inputmail}
-                />
-            </View>
-            <Button
-                mode="contained"
-                style={styles.continueButton}
-                onPress={handleForgotPassword}
-            >
-                Send
-            </Button>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -83,24 +106,28 @@ const styles = StyleSheet.create({
         marginRight: 30,
         marginTop: 50,
     },
-    label: {
+    instructionText: {
         fontSize: 16,
-        fontWeight: 'bold',
-        marginBottom: 10,
+        color: '#555',
+        marginBottom: 20,
+        textAlign: 'center',
     },
     inputContainer: {
-        marginTop: 30,
+        marginTop: 20,
     },
-    inputmail: {
-        marginBottom: 20,
+    input: {
         backgroundColor: '#fff',
-        borderWidth: 2,
-        borderColor: '#ccc',
+        marginBottom: 20,
     },
     continueButton: {
         marginTop: 30,
         borderRadius: 5,
-        backgroundColor: '#6FADF5'
+        backgroundColor: '#6FADF5',
+    },
+    loaderContainer: {
+        marginTop: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
 });
 

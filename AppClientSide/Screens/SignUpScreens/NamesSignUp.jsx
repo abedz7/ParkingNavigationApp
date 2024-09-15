@@ -1,53 +1,62 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
-const NamesSignUp = ({ navigation }) => {
+const NamesSignUp = ({ navigation, route }) => {
+    const { email, confirmEmail } = route.params;
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
+    const isNextButtonDisabled = !firstName || !lastName;
 
     return (
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <IconButton
-                    icon="arrow-left"
-                    style={styles.backButton}
-                    size={24}
-                    onPress={() => navigation.goBack()}
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <IconButton
+                        icon="arrow-left"
+                        style={styles.backButton}
+                        size={24}
+                        onPress={() => navigation.goBack()}
+                    />
+                    <Text style={styles.title}>Add Your First & Last Name</Text>
+                </View>
+                <View style={styles.stepsContainer}>
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                </View>
+                <TextInput
+                    label="First Name"
+                    value={firstName}
+                    onChangeText={setFirstName}
+                    mode="outlined"
+                    style={styles.input}
+                    outlineColor="#000000"
+                    activeOutlineColor="#6FADF5"
                 />
-                <Text style={styles.title}>Add Your First & Last Name</Text>
+                <TextInput
+                    label="Last Name"
+                    mode="outlined"
+                    value={lastName}
+                    onChangeText={setLastName}
+                    style={styles.input}
+                    outlineColor="#000000"
+                    activeOutlineColor="#6FADF5"
+                />
+                <Button
+                    mode="contained"
+                    style={styles.nextButton}
+                    onPress={() => navigation.navigate('PhoneSignUp', { email, confirmEmail, firstName, lastName })}
+                    disabled={isNextButtonDisabled}
+                >
+                    Next
+                </Button>
             </View>
-            <View style={styles.stepsContainer}>
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-            </View>
-            <Text style={styles.label}>First Name</Text>
-            <TextInput
-                mode="outlined"               
-                value={firstName}
-                onChangeText={setFirstName}
-                style={styles.input}
-            />
-            <Text style={styles.label}>Last Name</Text>
-            <TextInput
-                mode="outlined"             
-                value={lastName}
-                onChangeText={setLastName}
-                style={styles.input}
-            />
-            <Button
-                mode="contained"
-                style={styles.nextButton}
-                onPress={() => navigation.navigate('PhoneSignUp')} 
-            >
-                Next
-            </Button>
-        </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -61,7 +70,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-        
     },
     backButton: {
         marginTop: 40,
@@ -102,7 +110,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         backgroundColor: '#6FADF5',
         borderRadius: 5,
-
     },
 });
 

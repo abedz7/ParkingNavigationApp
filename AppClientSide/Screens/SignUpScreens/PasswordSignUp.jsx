@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, TextInput, TouchableOpacity } from 'react-native';
 import { Text, Button, IconButton } from 'react-native-paper';
-import { Feather } from '@expo/vector-icons'; 
+import { Feather } from '@expo/vector-icons';
 
-const PasswordSignUp = ({ navigation }) => {
+const PasswordSignUp = ({ navigation, route }) => {
+    const { email, confirmEmail, firstName, lastName, phoneNumber, cars, haveDisabledCertificate, isMom } = route.params; 
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
 
@@ -15,6 +16,20 @@ const PasswordSignUp = ({ navigation }) => {
     };
 
     const { minLength, hasNumber, hasSymbol } = validatePassword(password);
+
+    const handleNext = () => {
+        navigation.navigate('SummaryScreen', {
+            email,
+            confirmEmail,
+            firstName,
+            lastName,
+            phoneNumber,
+            cars,
+            haveDisabledCertificate,
+            isMom,
+            password,
+        });
+    };
 
     return (
         <View style={styles.container}>
@@ -66,7 +81,7 @@ const PasswordSignUp = ({ navigation }) => {
             <Button
                 mode="contained"
                 style={styles.continueButton}
-                onPress={() => navigation.navigate('Screen11')}
+                onPress={handleNext}
                 disabled={!minLength || !hasNumber || !hasSymbol}
             >
                 Continue
@@ -150,3 +165,4 @@ const styles = StyleSheet.create({
 });
 
 export default PasswordSignUp;
+

@@ -1,37 +1,33 @@
 import React from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-const Profile = () => {
+const Profile = ({ route }) => {
+  const { user } = route.params; // Get user from route params
+
   return (
     <View style={styles.container}>
-      <View style={styles.contentContainer}>
+      <Text style={styles.header}>Profile</Text>
+      <Text style={styles.name}>{user.First_Name} {user.Last_Name}</Text>
+      <Text style={styles.email}>{user.Email_adress}</Text>
 
-        <View style={styles.userInfo}>
-          <Image source={require('../../assets/images/abed.jpg')} style={styles.avatar} />
-          <Text style={styles.name}>Abed Jaber</Text>
-          <Text style={styles.location}>Taybe, Israel</Text>
-        </View>
-
-
-        <View style={styles.profileItems}>
-          <TouchableOpacity style={styles.profileItem}>
-            <Ionicons name="car-outline" size={24} color="black" style={styles.icon} />
-            <Text style={styles.profileItemText}>Your Cars</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.profileItem}>
-            <Ionicons name="settings-outline" size={24} color="black" style={styles.icon} />
-            <Text style={styles.profileItemText}>Settings</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.profileItem}>
-            <MaterialIcons name="people-outline" size={24} color="black" style={styles.icon} />
-            <Text style={styles.profileItemText}>Tell Your Friends</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.profileItem}>
-            <FontAwesome name="sign-out" size={24} color="black" style={styles.icon} />
-            <Text style={styles.profileItemText}>Log Out</Text>
-          </TouchableOpacity>
-        </View>
+      <View style={styles.profileItems}>
+        <TouchableOpacity style={styles.profileItem}>
+          <Ionicons name="car-outline" size={24} color="black" style={styles.icon} />
+          <Text style={styles.profileItemText}>Your Cars</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.profileItem}>
+          <Ionicons name="settings-outline" size={24} color="black" style={styles.icon} />
+          <Text style={styles.profileItemText}>Personal Info</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.profileItem}>
+          <MaterialIcons name="lock-outline" size={24} color="black" style={styles.icon} />
+          <Text style={styles.profileItemText}>Change Password</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.profileItem} onPress={() => Alert.alert('Logging out')}>
+          <FontAwesome name="sign-out" size={24} color="black" style={styles.icon} />
+          <Text style={styles.profileItemText}>Log Out</Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -40,47 +36,39 @@ const Profile = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
-    justifyContent: 'center', // Center vertically
+    padding: 20,
   },
-  contentContainer: {
-    alignItems: 'center',  // Center horizontally
-  },
-  // ... (other styles)
-  userInfo: {
-    alignItems: 'center',
-    marginBottom: 40, // Increased margin for more spacing
-  },
-  avatar: {
-    width: 120, // Made avatar bigger
-    height: 120,
-    borderRadius: 60,
+  header: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    marginBottom: 10,
   },
   name: {
-    fontSize: 22, // Increased font size
+    fontSize: 20,
     fontWeight: 'bold',
-    marginTop: 10,
+    marginBottom: 5,
   },
-  location: {
-    fontSize: 18, // Increased font size
-    color: '#888',
+  email: {
+    fontSize: 16,
+    color: 'gray',
+    marginBottom: 20,
   },
   profileItems: {
-    width: '80%', // Make the width of the items smaller
+    width: '100%',
   },
   profileItem: {
-    marginBottom: 20,  // Increased spacing
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
-    paddingBottom: 20,
-    flexDirection: 'row',  // Arrange icon and text horizontally
-    alignItems: 'center', // Center items vertically
   },
   profileItemText: {
-    fontSize: 18, // Increased font size
+    fontSize: 18,
+    marginLeft: 15,
   },
   icon: {
-    marginRight: 15, // Increased spacing
+    marginRight: 10,
   },
 });
 

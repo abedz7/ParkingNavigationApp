@@ -2,8 +2,22 @@ import React, { useState } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Text, Button, IconButton } from 'react-native-paper';
 
-const MomSignUp = ({ navigation }) => {
+const MomSignUp = ({ navigation, route }) => {
+    const { email, confirmEmail, firstName, lastName, phoneNumber, cars, haveDisabledCertificate } = route.params; 
     const [selectedOption, setSelectedOption] = useState('');
+
+    const handleNext = () => {
+        navigation.navigate('PasswordSignUp', {
+            email,
+            confirmEmail,
+            firstName,
+            lastName,
+            phoneNumber,
+            cars,
+            haveDisabledCertificate,
+            isMom: selectedOption === 'Yes',
+        });
+    };
 
     return (
         <View style={styles.container}>
@@ -15,8 +29,7 @@ const MomSignUp = ({ navigation }) => {
                     onPress={() => navigation.goBack()}
                 />
                 <Text style={styles.title}>
-                    Do You Have a Child Under 
-                    5 Years Old ?
+                    Do You Have a Child Under 5 Years Old?
                 </Text>
             </View>
             <View style={styles.stepsContainer}>
@@ -55,16 +68,14 @@ const MomSignUp = ({ navigation }) => {
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => {
-                    
-                    navigation.navigate('PasswordSignUp', { selectedOption });
-                }}
+                onPress={handleNext}
             >
                 Next
             </Button>
         </View>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {

@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet , TouchableWithoutFeedback, Keyboard} from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
-const PhoneSignUp = ({ navigation }) => {
-    const [userName, setUserName] = useState('');
-  
+const PhoneSignUp = ({ navigation, route }) => {
+    const { email, confirmEmail, firstName, lastName } = route.params; 
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const isNextButtonDisabled = !phoneNumber;
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <View style={styles.header}>
                 <IconButton
@@ -26,25 +28,29 @@ const PhoneSignUp = ({ navigation }) => {
                 <View style={styles.step} />
                 <View style={styles.step} />
             </View>
-            <Text style={styles.label}>Phone Number</Text>
             <TextInput
+            label="Phone Number"
                 mode="outlined"
                 placeholder="XXX-XXX-XXXX"
-                value={userName}
-                onChangeText={setUserName}
+                value={phoneNumber}
+                onChangeText={setPhoneNumber}
                 style={styles.input}
+                 outlineColor="#000000"
+                activeOutlineColor="#6FADF5"
             />
-            
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('CarSignUp')} 
+                onPress={() => navigation.navigate('CarSignUp', { email, confirmEmail, firstName, lastName, phoneNumber })} 
+                disabled={isNextButtonDisabled} 
             >
                 Next
             </Button>
         </View>
+        </TouchableWithoutFeedback>
     );
 };
+
 
 const styles = StyleSheet.create({
     container: {
@@ -56,7 +62,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 20,
-        
     },
     backButton: {
         marginTop: 40,
@@ -97,7 +102,6 @@ const styles = StyleSheet.create({
         marginTop: 20,
         backgroundColor: '#6FADF5',
         borderRadius: 5,
-
     },
 });
 

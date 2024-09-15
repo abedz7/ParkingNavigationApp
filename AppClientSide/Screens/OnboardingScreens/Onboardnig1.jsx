@@ -1,11 +1,9 @@
-
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
-import { Text, Button } from 'react-native-paper';
-import Icon from 'react-native-vector-icons/MaterialIcons';
-import { AntDesign } from '@expo/vector-icons';
+import { View, StyleSheet, TouchableOpacity , Image } from 'react-native';
+import { Text } from 'react-native-paper';
 
-const Onboardnig1 = ({ navigation }) => {
+
+const Onboarding1 = ({ navigation }) => {
   return (
     <View style={styles.container}>
       <View style={styles.upperSection}>
@@ -14,23 +12,25 @@ const Onboardnig1 = ({ navigation }) => {
         </Text>
       </View>
       <View style={styles.middleSection}>
-        
+        <Image
+          source={require('../../assets/images/Onboarding1Pic.png')}
+          style={styles.image}
+       />
       </View>
       <View style={styles.bottomSection}>
         <View style={styles.stepsIndicator}>
-        <View style={styles.rectangle} />
+          <View style={styles.rectangle} />
           <View style={styles.dot} />
           <View style={styles.dot} />
-         
         </View>
-        <Button
-          mode="contained"
+        <TouchableOpacity
           style={styles.nextButton}
           onPress={() => navigation.navigate('Onboarding2')}
         >
-        </Button>
-          <Icon name="arrow-forward" size={20} color="#fff" />
-          <AntDesign name="stepforward" size={24} color="black" />
+          <Text style={styles.buttonText}>
+            Next 
+          </Text>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -39,7 +39,7 @@ const Onboardnig1 = ({ navigation }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#6FADF5', 
+    backgroundColor: '#6FADF5',
   },
   upperSection: {
     flex: 2,
@@ -52,28 +52,27 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: '#fff',
     textAlign: 'center',
-   
+  },
+  image: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'contain',
   },
   middleSection: {
     flex: 3,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  image: {
-    width: '80%',
-    height: '80%',
-    resizeMode: 'contain',
-  },
   bottomSection: {
     flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
   },
   stepsIndicator: {
     flexDirection: 'row',
     alignItems: 'center',
+    marginBottom: 20,
   },
   dot: {
     width: 10,
@@ -91,13 +90,17 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     backgroundColor: '#1E90FF',
-    borderRadius: 50,
-    width: 50,
+    borderRadius: 25,
+    width: '80%',
     height: 50,
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 10,
+  },
+  buttonText: {
+    color: '#fff',
+    fontSize: 18,
+    fontWeight: 'bold',
   },
 });
 
-export default Onboardnig1;
+export default Onboarding1;

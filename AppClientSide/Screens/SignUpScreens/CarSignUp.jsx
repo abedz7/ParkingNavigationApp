@@ -1,97 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, Image, TouchableOpacity, PermissionsAndroid, Platform } from 'react-native'; 
-import { Text, TextInput, Button, IconButton } from 'react-native-paper';
-import { Picker } from '@react-native-picker/picker';
-import * as ImagePicker from 'expo-image-picker';
-import axios from 'axios';
+import { View, StyleSheet , TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { Text, TextInput, Button, IconButton, Menu} from 'react-native-paper';
 
-const CarSignUp = ({ navigation }) => {
+const CarSignUp = ({ navigation, route }) => {
+    const { email, confirmEmail, firstName, lastName, phoneNumber } = route.params; 
     const [carPlate, setCarPlate] = useState('');
     const [carData, setCarData] = useState([]);
     const [selectedBrand, setSelectedBrand] = useState('');
-    const [models, setModels] = useState([]);
     const [selectedModel, setSelectedModel] = useState('');
-    const [selectedImage, setSelectedImage] = useState(null);
+    const [menuVisible, setMenuVisible] = useState(false); 
+    const [modelMenuVisible, setModelMenuVisible] = useState(false); 
 
     useEffect(() => {
-        // Directly require the JSON file
         const data = require('../../assets/data/carData.json');
         setCarData(data);
     }, []);
 
-    const handleBrandChange = (brand) => {
-        setSelectedBrand(brand);
-        const selectedCarBrand = carData.find(car => car.brand === brand);
-        setModels(selectedCarBrand ? selectedCarBrand.models : []);
-        setSelectedModel(''); // Reset model selection when brand changes
-    };
-
-    const requestPhotoPermission = async () => {
-        try {
-            const granted = await PermissionsAndroid.request(
-                PermissionsAndroid.PERMISSIONS.READ_EXTERNAL_STORAGE,
-                {
-                    title: 'SpotCker Photo Access Permission',
-                    message:
-                        'SpotCker needs access to your photo library ' +
-                        'so you can upload an image of your car.',
-                    buttonNeutral: 'Ask Me Later',
-                    buttonNegative: 'Cancel',
-                    buttonPositive: 'OK',
-                }
-            );
-            return granted === PermissionsAndroid.RESULTS.GRANTED;
-        } catch (err) {
-            console.warn(err);
-            return false;
-        }
-    };
-
-    const handleImageUpload = async () => {
-        const result = await ImagePicker.requestMediaLibraryPermissionsAsync();
-        if (result.granted === false) {
-            alert('Permission to access media library is required!');
-            return;
-        }
-    
-        let pickerResult = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            allowsEditing: true,
-            aspect: [4, 3],
-            quality: 1,
-        });
-    
-        if (!pickerResult.cancelled) {
-            setSelectedImage(pickerResult.uri);
-            extractLicensePlate(pickerResult);
-        }
-    };
-
-    const extractLicensePlate = async (image) => {
-        const formData = new FormData();
-        formData.append('file', {
-            uri: image.uri,
-            name: 'car_image.jpg',
-            type: 'image/jpeg'
-        });
-
-        try {
-            const response = await axios.post('https://license-extractor.onrender.com/upload-image/', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data'
-                }
-            });
-            if (response.data['Detected License Plate Text']) {
-                setCarPlate(response.data['Detected License Plate Text']);
-            } else {
-                console.log('License plate not detected');
-            }
-        } catch (error) {
-            console.error('Error uploading image:', error);
-        }
+    const handleNext = () => {
+        const newCar = {
+            brand: selectedBrand,
+            model: selectedModel,
+            plate: carPlate,
+        };
+        navigation.navigate('DisabledSignUp', { email, confirmEmail, firstName, lastName, phoneNumber, cars: [newCar] });  
     };
 
     return (
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={styles.container}>
             <View style={styles.header}>
                 <IconButton
@@ -112,52 +47,83 @@ const CarSignUp = ({ navigation }) => {
                 <View style={styles.step} />
             </View>
             <Text style={styles.label}>Car Brand</Text>
-            <Picker
-                selectedValue={selectedBrand}
-                onValueChange={handleBrandChange}
-                style={styles.input}
+            <Menu
+                visible={menuVisible}
+                onDismiss={() => setMenuVisible(false)}
+                anchor={
+                    <Button
+                        mode="outlined"
+                        style={styles.menuButton}
+                        onPress={() => setMenuVisible(true)}
+                    >
+                        {selectedBrand ? selectedBrand : 'Select Car Brand'}
+                    </Button>
+                }
             >
-                <Picker.Item label="Select Car Brand" value="" />
                 {carData.map((car) => (
-                    <Picker.Item key={car.brand} label={car.brand} value={car.brand} />
-                ))}
-            </Picker>
-            <Text style={styles.label}>Car Model</Text>
-            <Picker
-                selectedValue={selectedModel}
-                onValueChange={(model) => setSelectedModel(model)}
-                style={styles.input}
-                enabled={models.length > 0}
-            >
-                <Picker.Item label="Select Car Model" value="" />
-                {models.map((model) => (
-                    <Picker.Item key={model} label={model} value={model} />
-                ))}
-            </Picker>
-            <Text style={styles.label}>License Plate Number</Text>
-            <View style={styles.plateInputContainer}>
-                <TextInput
-                    mode="outlined"
-                    placeholder="XX-XXX-XX / XXX-XX-XXX"
-                    value={carPlate}
-                    onChangeText={setCarPlate}
-                    style={styles.input}
-                />
-                <TouchableOpacity onPress={handleImageUpload}>
-                    <Image
-                        source={require('../../assets/images/abed.jpg')} 
-                        style={styles.photoIcon}
+                    <Menu.Item
+                        key={car.brand}
+                        onPress={() => {
+                            setSelectedBrand(car.brand);
+                            setMenuVisible(false);
+                        }}
+                        title={car.brand}
                     />
-                </TouchableOpacity>
-            </View>
+                ))}
+            </Menu>
+
+            {selectedBrand && (
+                <>
+                    <Text style={styles.label}>Car Model</Text>
+                    <Menu
+                        visible={modelMenuVisible}
+                        onDismiss={() => setModelMenuVisible(false)}
+                        anchor={
+                            <Button
+                                mode="outlined"
+                                style={styles.menuButton}
+                                onPress={() => setModelMenuVisible(true)}
+                            >
+                                {selectedModel ? selectedModel : 'Select Car Model'}
+                            </Button>
+                        }
+                    >
+                        {carData.find((car) => car.brand === selectedBrand)?.models.map((model) => (
+                            <Menu.Item
+                                key={model}
+                                onPress={() => {
+                                    setSelectedModel(model);
+                                    setModelMenuVisible(false);
+                                }}
+                                title={model}
+                            />
+                        ))}
+                    </Menu>
+                </>
+            )}
+
+            
+            <TextInput
+            label="Car Plate"
+                mode="outlined"
+                placeholder="XX-XXX-XX / XXX-XX-XXX"
+                value={carPlate}
+                onChangeText={setCarPlate}
+                style={styles.input}
+                outlineColor="#6FADF5"
+                activeOutlineColor="#6FADF5"
+            />
+
             <Button
                 mode="contained"
                 style={styles.nextButton}
-                onPress={() => navigation.navigate('DisabledSignUp')}
+                onPress={handleNext}
+                disabled={!selectedBrand || !selectedModel || !carPlate} 
             >
                 Next
             </Button>
         </View>
+        </TouchableWithoutFeedback>
     );
 };
 
@@ -203,24 +169,22 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
         marginBottom: 10,
-    },
-    plateInputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
+        color: '#6FADF5',
     },
     input: {
-        flex: 1,
         marginBottom: 20,
-    },
-    photoIcon: {
-        width: 30,
-        height: 30,
-        marginLeft: 10,
+        backgroundColor: '#fff',  // Ensure the background color is white
     },
     nextButton: {
         marginTop: 20,
         backgroundColor: '#6FADF5',
         borderRadius: 5,
+        paddingVertical: 10,
+    },
+    menuButton: {
+        borderColor: '#6FADF5',
+        borderWidth: 1,
+        marginBottom: 20,
     },
 });
 
