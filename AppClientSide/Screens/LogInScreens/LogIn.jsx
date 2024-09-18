@@ -10,7 +10,8 @@ const LogIn = ({ navigation }) => {
   const handleLogin = async () => {
     setLoading(true);
     try {
-      const response = await fetch('https://spotcker.onrender.com/api/Users/authenticateUser', {
+      // First authenticate the user
+      const loginResponse = await fetch('https://spotcker.onrender.com/api/Users/authenticateUser', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -21,13 +22,30 @@ const LogIn = ({ navigation }) => {
         }),
       });
   
-      const data = await response.json();
-      console.log('User data after login:', data); 
-      setLoading(false);
+      const loginData = await loginResponse.json();
+      
+      if (loginResponse.ok) {
+        // If authentication is successful, fetch the user data by email
+        const userResponse = await fetch(`https://spotcker.onrender.com/api/Users/getUserByEmail/${email.toLowerCase()}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
   
-      if (response.ok) {
-        navigation.navigate('HomeMap', { user: data });
+        const userData = await userResponse.json();
+        console.log('Fetched user data:', userData);  
+        
+        setLoading(false);
+  
+        if (userResponse.ok) {
+          
+          navigation.navigate('HomeMap', { user: userData.user });
+        } else {
+          Alert.alert('Failed to fetch user details');
+        }
       } else {
+        setLoading(false);
         Alert.alert('Failed to authenticate');
       }
     } catch (error) {
@@ -35,6 +53,7 @@ const LogIn = ({ navigation }) => {
       Alert.alert('Error', 'Something went wrong. Please try again later.');
     }
   };
+  
   
   
 

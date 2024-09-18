@@ -76,6 +76,7 @@ function HomeTabs({ user }) {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
+
           if (route.name === 'Location') {
             iconName = 'map-marker';
           } else if (route.name === 'Parkings') {
@@ -85,6 +86,7 @@ function HomeTabs({ user }) {
           } else if (route.name === 'Profile') {
             iconName = 'user';
           }
+
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#6FADF5',
@@ -97,13 +99,12 @@ function HomeTabs({ user }) {
       <Tab.Screen
         name="Profile"
         component={Profile}
-        initialParams={{ user }} 
+        initialParams={{ user }}  
         options={{ headerShown: false }}
       />
     </Tab.Navigator>
   );
 }
-
 const HomeMap = ({ route }) => {
   const { user } = route.params;  
   return (
