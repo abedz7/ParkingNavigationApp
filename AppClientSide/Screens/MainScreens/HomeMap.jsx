@@ -54,7 +54,7 @@ const LocationScreen = ({ navigation }) => {
       ) : (
         <View style={styles.centered}>
           {errorMsg ? (
-            <Text>{errorMsg}</Text>  
+            <Text>{errorMsg}</Text> 
           ) : (
             <ActivityIndicator size="large" color="#6FADF5" />
           )}
@@ -76,7 +76,6 @@ function HomeTabs({ user }) {
       screenOptions={({ route }) => ({
         tabBarIcon: ({ color, size }) => {
           let iconName;
-
           if (route.name === 'Location') {
             iconName = 'map-marker';
           } else if (route.name === 'Parkings') {
@@ -86,7 +85,6 @@ function HomeTabs({ user }) {
           } else if (route.name === 'Profile') {
             iconName = 'user';
           }
-
           return <FontAwesome name={iconName} size={size} color={color} />;
         },
         tabBarActiveTintColor: '#6FADF5',
@@ -94,12 +92,12 @@ function HomeTabs({ user }) {
       })}
     >
       <Tab.Screen name="Location" component={LocationScreen} options={{ headerShown: false }} />
-      <Tab.Screen name="Parkings" component={Parkings} options={{ headerShown: false }}/>            
+      <Tab.Screen name="Parkings" component={Parkings} options={{ headerShown: false }}/>
       <Tab.Screen name="Notifications" component={Screen19} options={{ headerShown: false }} />
       <Tab.Screen
         name="Profile"
-        component={Profile} // Properly pass the Profile component
-        initialParams={{ user }}  // Pass user as initial params
+        component={Profile}
+        initialParams={{ user }} 
         options={{ headerShown: false }}
       />
     </Tab.Navigator>
@@ -107,15 +105,13 @@ function HomeTabs({ user }) {
 }
 
 const HomeMap = ({ route }) => {
-  const { user } = route.params; // Get user data from login
-
+  const { user } = route.params;  
   return (
-    <View style={styles.container}>
-      <HomeTabs user={user} />  {/* Pass user data to HomeTabs */}
+    <View style={styles.container}>     
+      <HomeTabs user={user} />  
     </View>
   );
 };
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,

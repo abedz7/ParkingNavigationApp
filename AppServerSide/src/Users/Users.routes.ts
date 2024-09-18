@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword , deleteUser , updateUserCars , getUserCars, changeUserPassword} from '../Users/Users.controller';
+import { getAllUsers, getUserById, createUser, updateUser, authenticateUser, forgotPassword ,getUserByEmailadress, deleteUser , updateUserCars , getUserCars, changeUserPassword} from '../Users/Users.controller';
 
 const UsersRouter = Router();
 
@@ -11,6 +11,9 @@ UsersRouter.get('/getUserById/:id', getUserById);
 
 // Get cars associated with a specific user by ID
 UsersRouter.get('/getUserCars/:id', getUserCars);
+
+// Retrieve a specific user by email
+UsersRouter.get('/getUserByEmail/:email', getUserByEmailadress);
 
 // Create a new user
 UsersRouter.post('/createUser', createUser);

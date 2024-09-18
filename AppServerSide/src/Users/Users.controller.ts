@@ -39,6 +39,29 @@ export async function getUserById(req: Request, res: Response) {
 }
 
 /**
+ * Retrieves a specific user by their email address.
+ */
+export async function getUserByEmailadress(req: Request, res: Response) {
+    try {
+        const { email } = req.params;  
+
+        if (!email) {
+            return res.status(400).json({ error: 'Email address is required' });
+        }
+
+        const user = await getUserByEmail(email.toLowerCase());  
+
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({ error: 'An error occurred while retrieving the user' });
+    }
+}
+
+/**
  * Creates a new user in the database.
  */
 export async function createUser(req: Request, res: Response) {

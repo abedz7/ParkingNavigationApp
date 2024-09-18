@@ -3,19 +3,27 @@ import { View, StyleSheet, Text, TouchableOpacity, Alert } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 const Profile = ({ route }) => {
-  const { user } = route.params; // Get user from route params
+  const { user } = route.params;  
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Profile</Text>
-      <Text style={styles.name}>{user.First_Name} {user.Last_Name}</Text>
-      <Text style={styles.email}>{user.Email_adress}</Text>
+      <Text style={styles.name}>{user.First_Name} {user.Last_Name}</Text> 
+      <Text style={styles.email}>{user.Email_Address}</Text>  
+      <Text style={styles.phone}>{user.Phone_Number}</Text>  
 
       <View style={styles.profileItems}>
         <TouchableOpacity style={styles.profileItem}>
           <Ionicons name="car-outline" size={24} color="black" style={styles.icon} />
           <Text style={styles.profileItemText}>Your Cars</Text>
         </TouchableOpacity>
+        {user.Cars.map((car, index) => (
+          <View key={index} style={styles.carDetails}>
+            <Text style={styles.carText}>{car.Company} {car.Model}</Text>
+            <Text style={styles.carText}>License Plate: {car.License_Plate}</Text>
+          </View>
+        ))}
+
         <TouchableOpacity style={styles.profileItem}>
           <Ionicons name="settings-outline" size={24} color="black" style={styles.icon} />
           <Text style={styles.profileItemText}>Personal Info</Text>
@@ -24,6 +32,17 @@ const Profile = ({ route }) => {
           <MaterialIcons name="lock-outline" size={24} color="black" style={styles.icon} />
           <Text style={styles.profileItemText}>Change Password</Text>
         </TouchableOpacity>
+
+        <View style={styles.profileItem}>
+          <MaterialIcons name="accessible" size={24} color="black" style={styles.icon} />
+          <Text style={styles.profileItemText}>Disabled Certificate: {user.HaveDisabledCertificate ? 'Yes' : 'No'}</Text>
+        </View>
+
+        <View style={styles.profileItem}>
+          <MaterialIcons name="child-care" size={24} color="black" style={styles.icon} />
+          <Text style={styles.profileItemText}>Is Mom: {user.IsMom ? 'Yes' : 'No'}</Text>
+        </View>
+
         <TouchableOpacity style={styles.profileItem} onPress={() => Alert.alert('Logging out')}>
           <FontAwesome name="sign-out" size={24} color="black" style={styles.icon} />
           <Text style={styles.profileItemText}>Log Out</Text>
@@ -51,6 +70,11 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: 'gray',
+    marginBottom: 5,
+  },
+  phone: {
+    fontSize: 16,
+    color: 'gray',
     marginBottom: 20,
   },
   profileItems: {
@@ -62,6 +86,14 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     borderBottomWidth: 1,
     borderBottomColor: '#ddd',
+  },
+  carDetails: {
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+  },
+  carText: {
+    fontSize: 16,
+    color: '#555',
   },
   profileItemText: {
     fontSize: 18,
