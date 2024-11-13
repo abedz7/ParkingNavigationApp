@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet , TouchableWithoutFeedback, Keyboard} from 'react-native';
-import { Text, TextInput, Button, IconButton, Menu} from 'react-native-paper';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
+import { Text, TextInput, Button, IconButton, Menu } from 'react-native-paper';
 
 const CarSignUp = ({ navigation, route }) => {
     const { email, confirmEmail, firstName, lastName, phoneNumber } = route.params; 
@@ -9,120 +9,137 @@ const CarSignUp = ({ navigation, route }) => {
     const [selectedBrand, setSelectedBrand] = useState('');
     const [selectedModel, setSelectedModel] = useState('');
     const [menuVisible, setMenuVisible] = useState(false); 
-    const [modelMenuVisible, setModelMenuVisible] = useState(false); 
+    const [modelMenuVisible, setModelMenuVisible] = useState(false);
+    const [carPlateError, setCarPlateError] = useState('');
 
     useEffect(() => {
         const data = require('../../assets/data/carData.json');
         setCarData(data);
     }, []);
 
+    const validateCarPlate = (input) => {
+        const oldFormat = /^\d{2}-\d{3}-\d{2}$/; // XX-XXX-XX
+        const newFormat = /^\d{3}-\d{2}-\d{3}$/; // XXX-XX-XXX
+        if (!oldFormat.test(input) && !newFormat.test(input)) {
+            setCarPlateError('Please enter a valid car plate (e.g., 12-345-67 or 123-45-678).');
+        } else {
+            setCarPlateError('');
+        }
+    };
+
     const handleNext = () => {
-        const newCar = {
-            brand: selectedBrand,
-            model: selectedModel,
-            plate: carPlate,
-        };
-        navigation.navigate('DisabledSignUp', { email, confirmEmail, firstName, lastName, phoneNumber, cars: [newCar] });  
+        if (!carPlateError && carPlate) {
+            const newCar = {
+                brand: selectedBrand,
+                model: selectedModel,
+                plate: carPlate,
+            };
+            navigation.navigate('DisabledSignUp', { email, confirmEmail, firstName, lastName, phoneNumber, cars: [newCar] });
+        }
     };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <IconButton
-                    icon="arrow-left"
-                    style={styles.backButton}
-                    size={24}
-                    onPress={() => navigation.goBack()}
-                />
-                <Text style={styles.title}>Add Your Car Details</Text>
-            </View>
-            <View style={styles.stepsContainer}>
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-            </View>
-            <Text style={styles.label}>Car Brand</Text>
-            <Menu
-                visible={menuVisible}
-                onDismiss={() => setMenuVisible(false)}
-                anchor={
-                    <Button
-                        mode="outlined"
-                        style={styles.menuButton}
-                        onPress={() => setMenuVisible(true)}
-                    >
-                        {selectedBrand ? selectedBrand : 'Select Car Brand'}
-                    </Button>
-                }
-            >
-                {carData.map((car) => (
-                    <Menu.Item
-                        key={car.brand}
-                        onPress={() => {
-                            setSelectedBrand(car.brand);
-                            setMenuVisible(false);
-                        }}
-                        title={car.brand}
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <IconButton
+                        icon="arrow-left"
+                        style={styles.backButton}
+                        size={24}
+                        onPress={() => navigation.goBack()}
                     />
-                ))}
-            </Menu>
+                    <Text style={styles.title}>Add Your Car Details</Text>
+                </View>
+                <View style={styles.stepsContainer}>
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                </View>
+                <Text style={styles.label}>Car Brand</Text>
+                <Menu
+                    visible={menuVisible}
+                    onDismiss={() => setMenuVisible(false)}
+                    anchor={
+                        <Button
+                            mode="outlined"
+                            style={styles.menuButton}
+                            onPress={() => setMenuVisible(true)}
+                        >
+                            {selectedBrand ? selectedBrand : 'Select Car Brand'}
+                        </Button>
+                    }
+                >
+                    {carData.map((car) => (
+                        <Menu.Item
+                            key={car.brand}
+                            onPress={() => {
+                                setSelectedBrand(car.brand);
+                                setMenuVisible(false);
+                            }}
+                            title={car.brand}
+                        />
+                    ))}
+                </Menu>
 
-            {selectedBrand && (
-                <>
-                    <Text style={styles.label}>Car Model</Text>
-                    <Menu
-                        visible={modelMenuVisible}
-                        onDismiss={() => setModelMenuVisible(false)}
-                        anchor={
-                            <Button
-                                mode="outlined"
-                                style={styles.menuButton}
-                                onPress={() => setModelMenuVisible(true)}
-                            >
-                                {selectedModel ? selectedModel : 'Select Car Model'}
-                            </Button>
-                        }
-                    >
-                        {carData.find((car) => car.brand === selectedBrand)?.models.map((model) => (
-                            <Menu.Item
-                                key={model}
-                                onPress={() => {
-                                    setSelectedModel(model);
-                                    setModelMenuVisible(false);
-                                }}
-                                title={model}
-                            />
-                        ))}
-                    </Menu>
-                </>
-            )}
+                {selectedBrand && (
+                    <>
+                        <Text style={styles.label}>Car Model</Text>
+                        <Menu
+                            visible={modelMenuVisible}
+                            onDismiss={() => setModelMenuVisible(false)}
+                            anchor={
+                                <Button
+                                    mode="outlined"
+                                    style={styles.menuButton}
+                                    onPress={() => setModelMenuVisible(true)}
+                                >
+                                    {selectedModel ? selectedModel : 'Select Car Model'}
+                                </Button>
+                            }
+                        >
+                            {carData.find((car) => car.brand === selectedBrand)?.models.map((model) => (
+                                <Menu.Item
+                                    key={model}
+                                    onPress={() => {
+                                        setSelectedModel(model);
+                                        setModelMenuVisible(false);
+                                    }}
+                                    title={model}
+                                />
+                            ))}
+                        </Menu>
+                    </>
+                )}
 
-            
-            <TextInput
-            label="Car Plate"
-                mode="outlined"
-                placeholder="XX-XXX-XX / XXX-XX-XXX"
-                value={carPlate}
-                onChangeText={setCarPlate}
-                style={styles.input}
-                outlineColor="#6FADF5"
-                activeOutlineColor="#6FADF5"
-            />
+                <TextInput
+                    label="Car Plate"
+                    mode="outlined"
+                    placeholder="XX-XXX-XX / XXX-XX-XXX"
+                    value={carPlate}
+                    onChangeText={(text) => {
+                        setCarPlate(text);
+                        validateCarPlate(text);
+                    }}
+                    style={styles.input}
+                    outlineColor="#6FADF5"
+                    activeOutlineColor="#6FADF5"
+                    error={!!carPlateError}
+                />
+                {carPlateError ? <Text style={styles.errorText}>{carPlateError}</Text> : null}
 
-            <Button
-                mode="contained"
-                style={styles.nextButton}
-                onPress={handleNext}
-                disabled={!selectedBrand || !selectedModel || !carPlate} 
-            >
-                Next
-            </Button>
-        </View>
+                <Button
+                    mode="contained"
+                    style={styles.nextButton}
+                    onPress={handleNext}
+                    disabled={!selectedBrand || !selectedModel || !carPlate || !!carPlateError} 
+                >
+                    Next
+                </Button>
+            </View>
         </TouchableWithoutFeedback>
     );
 };
@@ -173,7 +190,13 @@ const styles = StyleSheet.create({
     },
     input: {
         marginBottom: 20,
-        backgroundColor: '#fff',  // Ensure the background color is white
+        backgroundColor: '#fff',
+    },
+    errorText: {
+        color: 'red',
+        fontSize: 12,
+        marginBottom: 10,
+        marginLeft: 15,
     },
     nextButton: {
         marginTop: 20,

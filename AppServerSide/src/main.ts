@@ -2,28 +2,35 @@ import 'dotenv/config'; // apply env vars
 import dotenv from 'dotenv';
 dotenv.config();
 import express from 'express';
+import cors from 'cors'; // Import the CORS middleware
 import UsersRouter from './Users/Users.routes';
 import ParkingLotsRouter from './ParkingLots/ParkingLots.routes';
 import parkingSpotsRouter from './ParkingSpots/ParkingSpots.routes';
 import ParkingsRouter from './Parkings/Parkings.routes';
 
-//config
-//process.env.PORT --> the live server port
+// Config
 const Port = process.env.PORT || 3000;
 
-//create the server
+// Create the server
 const server = express();
 
-//config JSON support
+// Apply CORS middleware with specific origin
+server.use(cors({
+  origin: 'http://localhost:5173', 
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  credentials: true,
+}));
+
+// Config JSON support
 server.use(express.json());
 
-//using routes
+// Using routes
 server.use('/api/Users', UsersRouter);
-server.use('/api/ParkingLots',ParkingLotsRouter)
-server.use('/api/ParkingSpots',parkingSpotsRouter)
-server.use('/api/Parkings',ParkingsRouter)
+server.use('/api/ParkingLots', ParkingLotsRouter);
+server.use('/api/ParkingSpots', parkingSpotsRouter);
+server.use('/api/Parkings', ParkingsRouter);
 
 // Run the server
 server.listen(Port, () => {
-  console.log(`Server is running on port ${Port}`);
+  console.log(`Server is running on port ${Port}`);
 });

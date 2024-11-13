@@ -1,56 +1,79 @@
 import React, { useState } from 'react';
-import { View, StyleSheet , TouchableWithoutFeedback, Keyboard} from 'react-native';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard } from 'react-native';
 import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 
 const PhoneSignUp = ({ navigation, route }) => {
     const { email, confirmEmail, firstName, lastName } = route.params; 
     const [phoneNumber, setPhoneNumber] = useState('');
-    const isNextButtonDisabled = !phoneNumber;
+    const [phoneError, setPhoneError] = useState('');
+
+    const validatePhoneNumber = (input) => {
+        const phoneRegex = /^05[01234578]-\d{3}-\d{4}$/; // Israeli phone number regex
+        if (!phoneRegex.test(input)) {
+            setPhoneError('Please enter a valid Israeli phone number (e.g., 050-123-4567).');
+        } else {
+            setPhoneError('');
+        }
+    };
+
+    const handleNextPress = () => {
+        if (!phoneError && phoneNumber) {
+            navigation.navigate('CarSignUp', { email, confirmEmail, firstName, lastName, phoneNumber });
+        } else if (!phoneNumber) {
+            setPhoneError('Phone number is required.');
+        }
+    };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-        <View style={styles.container}>
-            <View style={styles.header}>
-                <IconButton
-                    icon="arrow-left"
-                    style={styles.backButton}
-                    size={24}
-                    onPress={() => navigation.goBack()}
+            <View style={styles.container}>
+                <View style={styles.header}>
+                    <IconButton
+                        icon="arrow-left"
+                        style={styles.backButton}
+                        size={24}
+                        onPress={() => navigation.goBack()}
+                    />
+                    <Text style={styles.title}>Add Your Phone Number</Text>
+                </View>
+                <View style={styles.stepsContainer}>
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={[styles.step, styles.activeStep]} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                    <View style={styles.step} />
+                </View>
+
+                <TextInput
+                    label="Phone Number"
+                    mode="outlined"
+                    placeholder="050-123-4567"
+                    value={phoneNumber}
+                    onChangeText={(text) => {
+                        setPhoneNumber(text);
+                        validatePhoneNumber(text);
+                    }}
+                    style={styles.input}
+                    outlineColor="#000000"
+                    activeOutlineColor="#6FADF5"
+                    error={!!phoneError}
                 />
-                <Text style={styles.title}>Add Your Phone Number</Text>
+                {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
+
+                <Button
+                    mode="contained"
+                    style={styles.nextButton}
+                    onPress={handleNextPress}
+                    disabled={!!phoneError || !phoneNumber}
+                >
+                    Next
+                </Button>
             </View>
-            <View style={styles.stepsContainer}>
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={[styles.step, styles.activeStep]} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-                <View style={styles.step} />
-            </View>
-            <TextInput
-            label="Phone Number"
-                mode="outlined"
-                placeholder="XXX-XXX-XXXX"
-                value={phoneNumber}
-                onChangeText={setPhoneNumber}
-                style={styles.input}
-                 outlineColor="#000000"
-                activeOutlineColor="#6FADF5"
-            />
-            <Button
-                mode="contained"
-                style={styles.nextButton}
-                onPress={() => navigation.navigate('CarSignUp', { email, confirmEmail, firstName, lastName, phoneNumber })} 
-                disabled={isNextButtonDisabled} 
-            >
-                Next
-            </Button>
-        </View>
         </TouchableWithoutFeedback>
     );
 };
-
 
 const styles = StyleSheet.create({
     container: {
@@ -90,13 +113,14 @@ const styles = StyleSheet.create({
     activeStep: {
         backgroundColor: '#6FADF5',
     },
-    label: {
-        fontSize: 16,
-        fontWeight: 'bold',
+    input: {
         marginBottom: 10,
     },
-    input: {
-        marginBottom: 20,
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+        marginLeft: 15,
+        fontSize: 12,
     },
     nextButton: {
         marginTop: 20,

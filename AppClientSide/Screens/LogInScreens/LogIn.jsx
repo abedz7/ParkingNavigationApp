@@ -132,12 +132,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
   backButton: {
-    marginTop: 20, 
+    marginTop: 28, 
   },
   title: {
     fontSize: 24,
     fontWeight: 'bold',
     marginTop: 20,
+    marginRight : 20,
     textAlign: 'center',
     flex: 1,
   },

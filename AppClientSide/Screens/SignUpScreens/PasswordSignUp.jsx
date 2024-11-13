@@ -6,7 +6,9 @@ import { Feather } from '@expo/vector-icons';
 const PasswordSignUp = ({ navigation, route }) => {
     const { email, confirmEmail, firstName, lastName, phoneNumber, cars, haveDisabledCertificate, isMom } = route.params; 
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
     const validatePassword = (password) => {
         const minLength = password.length >= 8;
@@ -16,6 +18,7 @@ const PasswordSignUp = ({ navigation, route }) => {
     };
 
     const { minLength, hasNumber, hasSymbol } = validatePassword(password);
+    const passwordsMatch = password === confirmPassword;
 
     const handleNext = () => {
         navigation.navigate('SummaryScreen', {
@@ -28,6 +31,7 @@ const PasswordSignUp = ({ navigation, route }) => {
             haveDisabledCertificate,
             isMom,
             password,
+            confirmPassword,
         });
     };
 
@@ -67,6 +71,26 @@ const PasswordSignUp = ({ navigation, route }) => {
                     <Feather name={showPassword ? "eye-off" : "eye"} size={20} color="gray" />
                 </TouchableOpacity>
             </View>
+
+            <Text style={styles.label}>Confirm Password</Text>
+            <View style={styles.inputContainer}>
+                <TextInput
+                    secureTextEntry={!showConfirmPassword}
+                    placeholder="Confirm Password"
+                    value={confirmPassword}
+                    onChangeText={setConfirmPassword}
+                    style={styles.input}
+                />
+                <TouchableOpacity
+                    style={styles.icon}
+                    onPress={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                    <Feather name={showConfirmPassword ? "eye-off" : "eye"} size={20} color="gray" />
+                </TouchableOpacity>
+            </View>
+            {confirmPassword && !passwordsMatch && (
+                <Text style={styles.invalid}>Passwords do not match</Text>
+            )}
             <View style={styles.validationContainer}>
                 <Text style={minLength ? styles.valid : styles.invalid}>
                     ✓ 8 characters minimum
@@ -82,7 +106,7 @@ const PasswordSignUp = ({ navigation, route }) => {
                 mode="contained"
                 style={styles.continueButton}
                 onPress={handleNext}
-                disabled={!minLength || !hasNumber || !hasSymbol}
+                disabled={!minLength || !hasNumber || !hasSymbol || !passwordsMatch}
             >
                 Continue
             </Button>
@@ -139,7 +163,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 5,
         paddingHorizontal: 10,
-        marginBottom: 20,
+        marginBottom: 10,
     },
     input: {
         flex: 1,
@@ -165,4 +189,3 @@ const styles = StyleSheet.create({
 });
 
 export default PasswordSignUp;
-

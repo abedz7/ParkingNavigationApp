@@ -5,7 +5,6 @@ import { Provider as PaperProvider } from 'react-native-paper';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { StatusBar } from 'react-native';
-
 import Onboarding1 from './Screens/OnboardingScreens/Onboardnig1';
 import Onboarding2 from './Screens/OnboardingScreens/Onboarding2';
 import OnboardingWelcome from './Screens/OnboardingScreens/OnboardingWelcome';
@@ -25,7 +24,11 @@ import HomeMap from './Screens/MainScreens/HomeMap';
 import Parkings from './Screens/MainScreens/Parkings';
 import Screen19 from './Screens/MainScreens/Screen19';
 import Profile from './Screens/MainScreens/Profile';
-
+import AdminDash from './Screens/MainScreens/AdminDash';
+import UsersPanel from './Screens/DashScreens/UsersPanel';
+import ParkingLotsPanel from './Screens/DashScreens/ParkingLotsPanel';
+import ParkingSpotsPanel from './Screens/DashScreens/ParkingSpotsPanel';
+import ChangePass from './Screens/MainScreens/ChangePass';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +38,7 @@ export default function App() {
       <SafeAreaProvider>
         <GestureHandlerRootView style={{ flex: 1 }}>
           <PaperProvider>
-            <StatusBar barStyle="dark-content" />
+            <StatusBar barStyle="dark-content"/>
             <NavigationContainer>
               <Stack.Navigator initialRouteName="Onboarding1">
                 <Stack.Screen name="Onboardnig1" component={Onboarding1} options={{ headerShown: false }} />
@@ -57,6 +60,11 @@ export default function App() {
                 <Stack.Screen name="Parkings" component={Parkings} options={{ headerShown: false }} />
                 <Stack.Screen name="Screen19" component={Screen19} options={{ headerShown: false }} />
                 <Stack.Screen name="Profile" component={Profile} options={{ headerShown: false }} />
+                <Stack.Screen name="AdminDash" component={AdminDash} options={{ headerShown: false }} />
+                <Stack.Screen name="UsersPanel" component={UsersPanel} options={{ headerShown: false }} />
+                <Stack.Screen name="ParkingLotsPanel" component={ParkingLotsPanel} options={{ headerShown: false }} />
+                <Stack.Screen name="ParkingSpotsPanel" component={ParkingSpotsPanel} options={{ headerShown: false }} />
+                <Stack.Screen name="ChangePass" component={ChangePass} options={{ headerShown: false }} />
               </Stack.Navigator>
             </NavigationContainer>
           </PaperProvider>

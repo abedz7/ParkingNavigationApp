@@ -5,8 +5,35 @@ import { Text, TextInput, Button, IconButton } from 'react-native-paper';
 const EmailSignUp = ({ navigation }) => {
     const [email, setEmail] = useState('');
     const [confirmEmail, setConfirmEmail] = useState('');
+    const [emailError, setEmailError] = useState('');
+    const [confirmEmailError, setConfirmEmailError] = useState('');
 
-    const isNextButtonDisabled = !email || !confirmEmail;
+    const validateEmail = (input) => {
+        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; // Simple email regex
+        if (!emailRegex.test(input)) {
+            setEmailError('Please enter a valid email address.');
+        } else {
+            setEmailError('');
+        }
+    };
+
+    const validateConfirmEmail = (input) => {
+        if (input !== email) {
+            setConfirmEmailError("Email addresses don't match.");
+        } else {
+            setConfirmEmailError('');
+        }
+    };
+
+    const handleNextPress = () => {
+        if (!emailError && !confirmEmailError && email && confirmEmail) {
+            navigation.navigate('NamesSignUp', { email, confirmEmail });
+        } else {
+            // Set errors if inputs are invalid when pressing next
+            if (!email) setEmailError('Email is required.');
+            if (!confirmEmail) setConfirmEmailError('Please confirm your email.');
+        }
+    };
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
@@ -29,31 +56,44 @@ const EmailSignUp = ({ navigation }) => {
                     <View style={styles.step} />
                     <View style={styles.step} />
                 </View>
+
                 <TextInput
                     label="Email"
                     value={email}
-                    onChangeText={setEmail}
+                    onChangeText={(text) => {
+                        setEmail(text);
+                        validateEmail(text);
+                    }}
                     mode="outlined"
                     placeholder="example@example.com"
                     style={styles.input}
                     outlineColor="#6FADF5"
                     activeOutlineColor="#6FADF5"
+                    error={!!emailError}
                 />
+                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
                 <TextInput
                     label="Confirm Email"
                     value={confirmEmail}
-                    onChangeText={setConfirmEmail}
+                    onChangeText={(text) => {
+                        setConfirmEmail(text);
+                        validateConfirmEmail(text);
+                    }}
                     mode="outlined"
                     placeholder="example@example.com"
                     style={styles.input}
                     outlineColor="#6FADF5"
                     activeOutlineColor="#6FADF5"
+                    error={!!confirmEmailError}
                 />
+                {confirmEmailError ? <Text style={styles.errorText}>{confirmEmailError}</Text> : null}
+
                 <Button
                     mode="contained"
                     style={styles.nextButton}
-                    onPress={() => navigation.navigate('NamesSignUp', { email, confirmEmail })}
-                    disabled={isNextButtonDisabled}
+                    onPress={handleNextPress}
+                    disabled={!!emailError || !!confirmEmailError || !email || !confirmEmail}
                 >
                     Next
                 </Button>
@@ -101,8 +141,14 @@ const styles = StyleSheet.create({
         backgroundColor: '#6FADF5',
     },
     input: {
-        marginBottom: 20,
+        marginBottom: 10,
         backgroundColor: '#fff',
+    },
+    errorText: {
+        color: 'red',
+        marginBottom: 10,
+        marginLeft: 15,
+        fontSize: 12,
     },
     nextButton: {
         marginTop: 20,

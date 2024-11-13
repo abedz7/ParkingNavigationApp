@@ -1,14 +1,10 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
-import { Ionicons, MaterialIcons, FontAwesome, Feather } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
-const Profile = ({ route }) => {
-  const { user } = route.params;  
-
-  
+const Profile = ({ route, navigation }) => {
+  const { user } = route.params;
   const initials = `${user.First_Name.charAt(0)}${user.Last_Name.charAt(0)}`;
-
-  
   const getRandomColor = () => {
     const letters = '0123456789ABCDEF';
     let color = '#';
@@ -18,65 +14,62 @@ const Profile = ({ route }) => {
     return color;
   };
 
- 
   const [avatarBackgroundColor] = useState(getRandomColor);
-
-  
   const [showCars, setShowCars] = useState(false);
-  
-  
   const [showPersonalInfo, setShowPersonalInfo] = useState(false);
+  const [showAdminPanel, setShowAdminPanel] = useState(false);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      
-     
       <View style={styles.avatarContainer}>
         <View style={[styles.avatar, { backgroundColor: avatarBackgroundColor }]}>
           <Text style={styles.avatarText}>{initials}</Text>
         </View>
-        <Text style={styles.name}>{user.First_Name} {user.Last_Name}</Text> 
-        <Text style={styles.location}>Taybe, Israel</Text>
+        <Text style={styles.name}>{user.First_Name} {user.Last_Name}</Text>
+
+        {/* Show admin badge only if the user is an admin */}
+        {user.IsAdmin && (
+          <View style={styles.adminBadge}>
+            <FontAwesome name="shield" size={16} color="green" />
+            <Text style={styles.adminText}>Admin</Text>
+          </View>
+        )}
       </View>
 
-    
       <View style={styles.optionsContainer}>
-        
         <TouchableOpacity style={styles.profileItem} onPress={() => setShowCars(!showCars)}>
           <Ionicons name="car-outline" size={24} color="#4FADF5" style={styles.icon} />
           <Text style={styles.profileItemText}>Your Cars</Text>
         </TouchableOpacity>
 
-        
         {showCars && user.Cars.map((car, index) => (
           <View key={index} style={styles.carDetails}>
-            <Text style={styles.carText}>{car.Company} {car.Model}</Text>
-            <Text style={styles.carText}>License Plate: {car.License_Plate}</Text>
+            <Text style={styles.carText}>{car.brand} {car.model}</Text>
+            <Text style={styles.carText}>License Plate: {car.plate}</Text>
           </View>
         ))}
 
-        
         <TouchableOpacity style={styles.profileItem} onPress={() => setShowPersonalInfo(!showPersonalInfo)}>
           <Ionicons name="settings-outline" size={24} color="#4FADF5" style={styles.icon} />
           <Text style={styles.profileItemText}>Personal Information</Text>
         </TouchableOpacity>
 
-       
         {showPersonalInfo && (
           <View style={styles.personalInfo}>
             <Text style={styles.infoText}>Name: {user.First_Name} {user.Last_Name}</Text>
-            <Text style={styles.infoText}>Email: {user.Email_Address}</Text>
+            <Text style={styles.infoText}>Email: {user.Email_adress}</Text>
             <Text style={styles.infoText}>Phone: {user.Phone_Number}</Text>
           </View>
         )}
 
-        
-        <TouchableOpacity style={styles.profileItem}>
+        <TouchableOpacity
+          style={styles.profileItem}
+          onPress={() => navigation.navigate('ChangePass', { userId: user._id })}  
+        >
           <MaterialIcons name="lock-outline" size={24} color="#4FADF5" style={styles.icon} />
           <Text style={styles.profileItemText}>Change Password</Text>
         </TouchableOpacity>
 
-        
         <TouchableOpacity
           style={styles.profileItem}
           onPress={() => alert('Logging out')}
@@ -84,6 +77,25 @@ const Profile = ({ route }) => {
           <MaterialIcons name="logout" size={24} color="#4FADF5" style={styles.icon} />
           <Text style={styles.profileItemText}>Log Out</Text>
         </TouchableOpacity>
+
+        {/* Admin Panel Section */}
+        {user.IsAdmin && (
+          <>
+            <TouchableOpacity style={styles.profileItem} onPress={() => navigation.navigate('AdminDash')}>
+              <Ionicons name="settings-sharp" size={24} color="green" style={styles.icon} />
+              <Text style={styles.profileItemText}>Admin Panel</Text>
+            </TouchableOpacity>
+
+            {showAdminPanel && (
+              <View style={styles.adminPanel}>
+                <Text style={styles.adminPanelText}>Admin Dashboard</Text>
+                <Text style={styles.adminPanelText}>Manage Users</Text>
+                <Text style={styles.adminPanelText}>View Reports</Text>
+                <Text style={styles.adminPanelText}>System Settings</Text>
+              </View>
+            )}
+          </>
+        )}
       </View>
     </ScrollView>
   );
@@ -94,7 +106,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     backgroundColor: '#fff',
     alignItems: 'center',
-    paddingVertical: 60,  
+    paddingVertical: 60,
   },
   avatarContainer: {
     alignItems: 'center',
@@ -119,12 +131,18 @@ const styles = StyleSheet.create({
     color: '#3D4F5C',
     marginBottom: 5,
   },
-  location: {
+  adminBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 5,
+  },
+  adminText: {
     fontSize: 16,
-    color: 'gray',
+    color: 'green',
+    marginLeft: 5,
   },
   optionsContainer: {
-    width: '80%',  
+    width: '80%',
     marginTop: 20,
   },
   profileItem: {
@@ -154,6 +172,15 @@ const styles = StyleSheet.create({
     paddingLeft: 40,
   },
   infoText: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 5,
+  },
+  adminPanel: {
+    paddingVertical: 10,
+    paddingLeft: 40,
+  },
+  adminPanelText: {
     fontSize: 16,
     color: '#555',
     marginBottom: 5,
