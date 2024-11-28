@@ -21,7 +21,8 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      }     
+      }
+      
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -30,9 +31,10 @@
       [
         "expo-location",
         {
-          "locationAlwaysAndWhenInUsePermission": "Allow $(PRODUCT_NAME) to use your location."
+          "locationAlwaysAndWhenInUsePermission": "Allow SpotCker to use your location."
         }
       ]
-    ]
+    ],
+    "newArchEnabled": true 
   }
 }

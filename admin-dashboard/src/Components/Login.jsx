@@ -1,7 +1,8 @@
+// src/Components/Login.jsx
 import React, { useState } from 'react';
 import { Container, Row, Col, Form, Button, Card, Alert, Spinner, InputGroup } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
+import { useNavigate } from 'react-router-dom';
 
 const Login = ({ setAdmin }) => {
     const [email, setEmail] = useState('');
@@ -17,7 +18,6 @@ const Login = ({ setAdmin }) => {
         setError('');
     
         try {
-            // Authenticate the user
             const loginResponse = await fetch('https://spotcker.onrender.com/api/Users/authenticateUser', {
                 method: 'POST',
                 headers: {
@@ -29,33 +29,30 @@ const Login = ({ setAdmin }) => {
                 }),
             });
     
-            if (!loginResponse.ok) {
-                const loginData = await loginResponse.json();
-                setError(loginData.error || 'Authentication failed');
-                setLoading(false);
-                return;
-            }
+            const loginData = await loginResponse.json();
+            console.log("Login response:", loginData);
     
-            // Fetch user data upon successful authentication
-            const userResponse = await fetch(`https://spotcker.onrender.com/api/Users/getUserByEmail/${email.toLowerCase()}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
+            if (loginResponse.ok) {
+                const userResponse = await fetch(`https://spotcker.onrender.com/api/Users/getUserByEmail/${email.toLowerCase()}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                });
     
-            if (!userResponse.ok) {
                 const userData = await userResponse.json();
-                setError(userData.error || 'Failed to fetch user details');
-                setLoading(false);
-                return;
-            }
+                console.log("User data:", userData);
     
-            const userData = await userResponse.json();
-            setAdmin(userData.user); // Pass admin data to parent state
-            navigate('/admin'); // Redirect to Admin Panel
+                if (userResponse.ok) {
+                    setAdmin(userData.user); // Set admin data only after successful fetch
+                    navigate('/admin'); // Redirect to Admin Panel
+                } else {
+                    setError('Failed to fetch user details');
+                }
+            } else {
+                setError(loginData.error || 'Failed to authenticate');
+            }
         } catch (error) {
-            console.error("Login Error:", error);
             setError('Error: Something went wrong. Please try again later.');
         } finally {
             setLoading(false);

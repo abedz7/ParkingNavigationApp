@@ -1,12 +1,17 @@
+// src/Components/AdminPanel.jsx
 import React from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
 
-export const AdminPanel = ({ admin }) => {
+const AdminPanel = ({ admin }) => {
+    const navigate = useNavigate();
+
     if (!admin) {
-        return <p>Loading...</p>;
+        return <div>Loading admin data...</div>;
     }
 
-    const initials = `${admin.First_Name.charAt(0)}${admin.Last_Name.charAt(0)}`;
+    // Extract the initials using the actual property names
+    const initials = `${admin.First_Name?.charAt(0) ?? ''}${admin.Last_Name?.charAt(0) ?? ''}`;
 
     return (
         <Container fluid className="p-4 bg-light">
@@ -30,7 +35,7 @@ export const AdminPanel = ({ admin }) => {
                                 {/* Admin name and badge */}
                                 <div className="ms-3">
                                     <h4 className="mb-0">
-                                        {admin.First_Name} {admin.Last_Name}
+                                        {admin.First_Name} {admin.Last_Name || "Loading..."}
                                     </h4>
                                     <Badge bg="success" className="ms-2">
                                         Admin
@@ -41,19 +46,23 @@ export const AdminPanel = ({ admin }) => {
                             {/* Admin details */}
                             <Row>
                                 <Col xs={12} className="mb-2">
-                                    <strong>Email:</strong> {admin.Email_adress}
+                                    <strong>Email:</strong> {admin.Email_adress || "Loading..."}
                                 </Col>
                                 <Col xs={12} className="mb-2">
-                                    <strong>Phone Number:</strong> {admin.Phone_Number}
+                                    <strong>Phone Number:</strong> {admin.Phone_Number || "Loading..."}
                                 </Col>
                                 <Col xs={12} className="mb-2">
                                     <strong>Cars:</strong>
                                     <ul className="mt-2">
-                                        {admin.Cars.map((car, index) => (
-                                            <li key={index}>
-                                                {car.brand} {car.model} - Plate: {car.plate}
-                                            </li>
-                                        ))}
+                                        {admin.Cars && admin.Cars.length > 0 ? (
+                                            admin.Cars.map((car, index) => (
+                                                <li key={index}>
+                                                    {car.company} {car.model} - Plate: {car.plate}
+                                                </li>
+                                            ))
+                                        ) : (
+                                            <li>No cars found</li>
+                                        )}
                                     </ul>
                                 </Col>
                             </Row>
@@ -65,7 +74,7 @@ export const AdminPanel = ({ admin }) => {
                         <Card.Body>
                             <h5 className="text-center mb-4">Admin Actions</h5>
                             <div className="d-flex flex-column">
-                                <Button variant="primary" className="mb-3">
+                                <Button variant="primary" className="mb-3" onClick={() => navigate("/manage-users")}>
                                     Manage Users
                                 </Button>
                                 <Button variant="info" className="mb-3">

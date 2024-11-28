@@ -24,5 +24,5 @@ export async function updateParking(id: string, updateData: Partial<Parking>) {
 
 // Get all parkings by User ID
 export async function getParkingsByUserId(userId: string) {
-    return await getParkingsByUserIdFromDb(new ObjectId(userId));
+    return await getParkingsByUserIdFromDb(new ObjectId(userId)); 
 }
