@@ -59,19 +59,16 @@ export async function updateParkingInDb(id: ObjectId, updateData: Partial<Parkin
 }
 
 // Database Function
-export async function getParkingsByUserIdFromDb(userId: ObjectId) {
+export async function getParkingsByUserIdFromDb(userId: ObjectId | string) {
     let mongo: MongoClient | null = null;
     try {
         mongo = new MongoClient(DB_INFO.host);
         await mongo.connect();
-        
-        
-        const result = await mongo.db(DB_INFO.db)
+        return await mongo
+            .db(DB_INFO.db)
             .collection(DB_INFO.Collection)
-            .find({ User_ID: userId })
+            .find({ User_ID: userId.toString() }) 
             .toArray();
-            
-        return result;
     } finally {
         if (mongo != null) mongo.close();
     }
