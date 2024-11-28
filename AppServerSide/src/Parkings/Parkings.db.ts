@@ -64,8 +64,16 @@ export async function getParkingsByUserIdFromDb(userId: ObjectId) {
     try {
         mongo = new MongoClient(DB_INFO.host);
         await mongo.connect();
-        return await mongo.db(DB_INFO.db).collection(DB_INFO.Collection).find({ User_ID: userId }).toArray(); 
+        
+        
+        const result = await mongo.db(DB_INFO.db)
+            .collection(DB_INFO.Collection)
+            .find({ User_ID: userId })
+            .toArray();
+            
+        return result;
     } finally {
         if (mongo != null) mongo.close();
     }
 }
+
