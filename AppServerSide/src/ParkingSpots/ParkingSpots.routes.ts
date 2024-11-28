@@ -5,13 +5,20 @@ import {
     getParkingSpotsByLotIdController,
     updateParkingSpotController,
     addMultipleParkingSpotsController,
-    getParkingSpotsByLotNameController // Import the new controller function
+    getParkingSpotsByLotNameController,
+    getAllParkingSpotsController,
+    getLotNameBySpotIdController // Import the new controller function
 } from './ParkingSpots.controller';
 
 const parkingSpotsRouter = Router();
+// Get all parking spots
+parkingSpotsRouter.get('/getAllSpots', getAllParkingSpotsController);
 
 // Add a single parking spot
 parkingSpotsRouter.post('/addParkingSpot', addParkingSpotController);
+
+// Get lot name by spot ID
+parkingSpotsRouter.get('/getLotNameBySpotId/:spotId', getLotNameBySpotIdController);
 
 // Remove a parking spot by ID
 parkingSpotsRouter.delete('/removeParkingSpot/:id', removeParkingSpotController);

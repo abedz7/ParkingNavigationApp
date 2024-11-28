@@ -5,8 +5,38 @@ import {
     getParkingSpotsByLotId,
     updateParkingSpot,
     addMultipleParkingSpots,
-    getParkingSpotsByLotName 
+    getParkingSpotsByLotName,
+    getAllParkingSpots,
+    getLotNameBySpotId
 } from "./ParkingSpots.model";
+import { ObjectId } from "mongodb";
+
+/**
+ * Get all parking spots.
+ */
+export async function getAllParkingSpotsController(req: Request, res: Response) {
+    try {
+      const spots = await getAllParkingSpots();
+      res.status(200).json({ spots });
+    } catch (error) {
+      console.error('Error fetching parking spots:', error);
+      res.status(500).json({ error: 'Failed to fetch parking spots' });
+    }
+  }
+
+  /**
+ * Get lot name by spot ID.
+ */
+export async function getLotNameBySpotIdController(req: Request, res: Response) {
+    try {
+        const { spotId } = req.params;
+        const lotName = await getLotNameBySpotId(new ObjectId(spotId));
+        res.status(200).json({ lotName });
+    } catch (error) {
+        console.error("Error fetching lot name:", error);
+        res.status(500).json({ error: "Failed to fetch lot name" });
+    }
+}
 
 /**
  * Add a single parking spot.

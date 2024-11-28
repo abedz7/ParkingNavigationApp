@@ -1,10 +1,61 @@
-import { MongoClient, ObjectId } from "mongodb";
+import { Collection, MongoClient, ObjectId } from "mongodb";
 import { ParkingSpot } from "./ParkingSpots.type";
 const DB_INFO = {
     host: process.env.CONNECTION_STRING as string,
     db: process.env.DB_NAME as string,
-    Collection: 'ParkingSpots'
+    Collection: 'ParkingSpots',
+    Collection2: 'ParkingLots'
 };
+
+/**
+ * Get all parking spots from the database.
+ */
+export async function getAllParkingSpotsFromDb(): Promise<ParkingSpot[]> {
+    let mongo: MongoClient | null = null;
+    try {
+        mongo = new MongoClient(DB_INFO.host);
+        await mongo.connect();
+
+        return await mongo
+            .db(DB_INFO.db)
+            .collection<ParkingSpot>(DB_INFO.Collection)
+            .find({})
+            .toArray();
+    } finally {
+        if (mongo) mongo.close();
+    }
+}
+
+/**
+ * Get lot name by Spot ID from the database.
+ */
+export async function getLotNameBySpotIdFromDb(spotId: ObjectId): Promise<string | null> {
+    let mongo: MongoClient | null = null;
+    try {
+        mongo = new MongoClient(DB_INFO.host);
+        await mongo.connect();
+
+        // Find the spot document by Spot ID
+        const spot = await mongo
+            .db(DB_INFO.db)
+            .collection(DB_INFO.Collection)
+            .findOne({ _id: spotId });
+
+        if (!spot || !spot.Parking_Lot_ID) {
+            throw new Error("Spot or Parking Lot ID not found");
+        }
+
+        // Fetch the lot name using Parking_Lot_ID
+        const lot = await mongo
+            .db(DB_INFO.db)
+            .collection(DB_INFO.Collection2) 
+            .findOne({ _id: spot.Parking_Lot_ID });
+
+        return lot?.Name || null; 
+    } finally {
+        if (mongo) mongo.close();
+    }
+}
 
 // Add a single parking spot to the database
 export async function addParkingSpotToDb(spot: ParkingSpot) {

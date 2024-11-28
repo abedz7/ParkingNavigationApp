@@ -1,7 +1,20 @@
 import { ObjectId } from "mongodb";
 import { ParkingSpot } from "./ParkingSpots.type";
-import { addParkingSpotToDb, removeParkingSpotFromDb, getParkingSpotsByLotIdFromDb, updateParkingSpotInDb, getParkingSpotsCountByType, addMultipleParkingSpotsToDb, getParkingSpotsByLotNameFromDb } from "./ParkingSpots.db";
+import { getAllParkingSpotsFromDb, getLotNameBySpotIdFromDb, addParkingSpotToDb, removeParkingSpotFromDb, getParkingSpotsByLotIdFromDb, updateParkingSpotInDb, getParkingSpotsCountByType, addMultipleParkingSpotsToDb, getParkingSpotsByLotNameFromDb } from "./ParkingSpots.db";
 
+/**
+ * Get all parking spots.
+ */
+export async function getAllParkingSpots(): Promise<ParkingSpot[]> {
+    return await getAllParkingSpotsFromDb();
+}
+
+/**
+ * Get lot name by spot ID.
+ */
+export async function getLotNameBySpotId(spotId: ObjectId): Promise<string | null> {
+    return await getLotNameBySpotIdFromDb(spotId);
+}
 // Add a single parking spot
 export async function addParkingSpot(spot: ParkingSpot) {
     return await addParkingSpotToDb(spot);

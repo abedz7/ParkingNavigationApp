@@ -258,12 +258,7 @@ const LocationScreen = ({ navigation, route }) => {
           )}
         </View>
       )}
-      <IconButton
-        icon="menu"
-        size={30}
-        onPress={() => navigation.openDrawer()}
-        style={styles.menuButton}
-      />
+      
   
       {selectedParkingLot && (
         <View style={styles.bottomSheet}>
@@ -360,7 +355,12 @@ function HomeTabs({ user }) {
         initialParams={{ user }}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name="Parkings" component={Parkings} options={{ headerShown: false }} />
+      <Tab.Screen
+        name="Parkings"
+        component={Parkings}
+        initialParams={{ user }}
+        options={{ headerShown: false }}
+      />
       <Tab.Screen name="Notifications" component={Screen19} options={{ headerShown: false }} />
       <Tab.Screen
         name="Profile"
@@ -371,6 +371,7 @@ function HomeTabs({ user }) {
     </Tab.Navigator>
   );
 }
+
 
 const HomeMap = ({ route }) => {
   const { user } = route.params || {};
