@@ -10,12 +10,12 @@ const UsersPanel = ({ navigation }) => {
 
   const getAllUsers = async () => {
     try {
-      setLoading(true); // Show loading indicator
+      setLoading(true); 
       const response = await fetch('https://spotcker.onrender.com/api/Users/getAllUsers');
       const data = await response.json();
-      console.log("Fetched Users:", data); // Debug log to check response
+      
 
-      if (data && data.Users) {  // Adjusting to match the actual response structure
+      if (data && data.Users) {  
         setUsers(data.Users);
       } else {
         console.error("Unexpected data format:", data);
@@ -24,7 +24,7 @@ const UsersPanel = ({ navigation }) => {
       console.error("Error fetching users:", error);
       setUsers([]);
     } finally {
-      setLoading(false); // Hide loading indicator
+      setLoading(false); 
     }
   };
 

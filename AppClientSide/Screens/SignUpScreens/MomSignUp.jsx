@@ -97,9 +97,9 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         marginBottom: 20,
         marginTop: 50,
-        width: '80%',  // Reduce the width to allow wrapping
-        alignSelf: 'center',  // Center the title horizontally
-        lineHeight: 24,  // Adjust line height for better readability
+        width: '80%',  
+        alignSelf: 'center',  
+        lineHeight: 24,  
     },
     stepsContainer: {
         flexDirection: 'row',

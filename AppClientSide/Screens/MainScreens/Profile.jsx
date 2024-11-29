@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { View, StyleSheet, Text, TouchableOpacity, ScrollView } from 'react-native';
+import { View, StyleSheet, Text, TouchableOpacity, ScrollView , Alert } from 'react-native';
 import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
+
 
 const Profile = ({ route, navigation }) => {
   const { user } = route.params;
@@ -71,12 +72,33 @@ const Profile = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.profileItem}
-          onPress={() => alert('Logging out')}
-        >
-          <MaterialIcons name="logout" size={24} color="#4FADF5" style={styles.icon} />
-          <Text style={styles.profileItemText}>Log Out</Text>
-        </TouchableOpacity>
+  style={styles.profileItem}
+  onPress={() =>
+    Alert.alert(
+      'Log Out',
+      'Are you sure you want to log out?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Log Out',
+          style: 'destructive',
+          onPress: () => {
+            // Navigate to OnboardingWelcome and clear user data
+            navigation.reset({
+              index: 0,
+              routes: [{ name: 'OnboardingWelcome', params: { user: null } }],
+            });
+          },
+        },
+      ],
+      { cancelable: true }
+    )
+  }
+>
+  <MaterialIcons name="logout" size={24} color="#4FADF5" style={styles.icon} />
+  <Text style={styles.profileItemText}>Log Out</Text>
+</TouchableOpacity>
+
 
         {/* Admin Panel Section */}
         {user.IsAdmin && (

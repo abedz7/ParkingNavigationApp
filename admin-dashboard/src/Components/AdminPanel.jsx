@@ -1,4 +1,3 @@
-// src/Components/AdminPanel.jsx
 import React from 'react';
 import { Container, Row, Col, Card, Button, Badge } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,6 @@ const AdminPanel = ({ admin }) => {
         return <div>Loading admin data...</div>;
     }
 
-    // Extract the initials using the actual property names
     const initials = `${admin.First_Name?.charAt(0) ?? ''}${admin.Last_Name?.charAt(0) ?? ''}`;
 
     return (
@@ -20,7 +18,6 @@ const AdminPanel = ({ admin }) => {
                     <Card className="shadow-lg mb-4">
                         <Card.Body>
                             <div className="d-flex align-items-center mb-3">
-                                {/* Avatar */}
                                 <div
                                     className="d-flex align-items-center justify-content-center bg-primary text-white rounded-circle"
                                     style={{
@@ -32,7 +29,6 @@ const AdminPanel = ({ admin }) => {
                                 >
                                     {initials}
                                 </div>
-                                {/* Admin name and badge */}
                                 <div className="ms-3">
                                     <h4 className="mb-0">
                                         {admin.First_Name} {admin.Last_Name || "Loading..."}
@@ -43,7 +39,6 @@ const AdminPanel = ({ admin }) => {
                                 </div>
                             </div>
 
-                            {/* Admin details */}
                             <Row>
                                 <Col xs={12} className="mb-2">
                                     <strong>Email:</strong> {admin.Email_adress || "Loading..."}
@@ -69,7 +64,6 @@ const AdminPanel = ({ admin }) => {
                         </Card.Body>
                     </Card>
 
-                    {/* Admin action buttons */}
                     <Card className="shadow-lg">
                         <Card.Body>
                             <h5 className="text-center mb-4">Admin Actions</h5>
@@ -77,11 +71,11 @@ const AdminPanel = ({ admin }) => {
                                 <Button variant="primary" className="mb-3" onClick={() => navigate("/manage-users")}>
                                     Manage Users
                                 </Button>
-                                <Button variant="info" className="mb-3">
+                                <Button variant="info" className="mb-3" onClick={() => navigate("/manage-parking-lots")} >
                                     Manage Parking Lots
                                 </Button>
-                                <Button variant="secondary" className="mb-3">
-                                    View Reports
+                                <Button variant="warning" className="mb-3" onClick={() => navigate("/manage-parking-spots")}>
+                                    Manage Parking Spots
                                 </Button>
                             </div>
                         </Card.Body>

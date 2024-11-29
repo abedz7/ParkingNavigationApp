@@ -9,7 +9,7 @@ const EmailSignUp = ({ navigation }) => {
     const [confirmEmailError, setConfirmEmailError] = useState('');
 
     const validateEmail = (input) => {
-        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; // Simple email regex
+        const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/; 
         if (!emailRegex.test(input)) {
             setEmailError('Please enter a valid email address.');
         } else {
@@ -29,7 +29,7 @@ const EmailSignUp = ({ navigation }) => {
         if (!emailError && !confirmEmailError && email && confirmEmail) {
             navigation.navigate('NamesSignUp', { email, confirmEmail });
         } else {
-            // Set errors if inputs are invalid when pressing next
+            
             if (!email) setEmailError('Email is required.');
             if (!confirmEmail) setConfirmEmailError('Please confirm your email.');
         }

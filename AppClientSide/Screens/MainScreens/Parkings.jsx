@@ -6,50 +6,33 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
-const Parkings = ({ route }) => {
+const Profile = ({ route, navigation }) => {
   const { user } = route.params || {};
   const [parkingRecords, setParkingRecords] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [updatingId, setUpdatingId] = useState(null); 
-  const [spotToLotMap, setSpotToLotMap] = useState({});
-
+  const [updatingId, setUpdatingId] = useState(null);
 
   useEffect(() => {
-    fetchSpots(); 
     if (user?._id) {
-      fetchParkingRecords(user._id); 
+      fetchParkingRecords(user._id);
     }
-  }, [user]);
-  
 
-
-  const fetchSpots = async () => {
-    try {
-      const response = await fetch(
-        `https://spotcker.onrender.com/api/ParkingSpots/getAllSpots`
-      );
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch parking spots');
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (user?._id) {
+        fetchParkingRecords(user._id);
       }
-  
-      const data = await response.json();
-  
-      
-      const mapping = {};
-      data.spots.forEach((spot) => {
-        mapping[spot._id] = spot.Lot_Name; 
-      });
-  
-      setSpotToLotMap(mapping); 
-    } catch (error) {
-      console.error('Error fetching spots:', error);
-    }
-  };
-  
+    });
+
+    return unsubscribe;
+  }, [user, navigation]);
+
   const fetchParkingRecords = async (userId) => {
+    setLoading(true);
     try {
       const response = await fetch(
         `https://spotcker.onrender.com/api/Parkings/getParkingsByUserId/${userId}`
@@ -60,7 +43,16 @@ const Parkings = ({ route }) => {
       }
 
       const data = await response.json();
-      setParkingRecords(data.parkings || []);
+      const validRecords = data.parkings.filter((record) => record.Spot_ID);
+
+      const recordsWithLotNames = await Promise.all(
+        validRecords.map(async (record) => {
+          const lotName = await fetchLotNameBySpotId(record.Spot_ID);
+          return { ...record, Lot_Name: lotName };
+        })
+      );
+
+      setParkingRecords(recordsWithLotNames);
     } catch (error) {
       console.error('Error fetching parking records:', error);
     } finally {
@@ -68,8 +60,31 @@ const Parkings = ({ route }) => {
     }
   };
 
+  const fetchLotNameBySpotId = async (spotId) => {
+    if (!spotId) {
+      console.error("Invalid Spot ID:", spotId);
+      return "Unknown";
+    }
+
+    try {
+      const response = await fetch(
+        `https://spotcker.onrender.com/api/ParkingSpots/getLotNameBySpotId/${spotId}`
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP Error: ${response.status}`);
+      }
+
+      const data = await response.json();
+      return data.lotName || "Unknown";
+    } catch (error) {
+      console.error(`Error fetching lot name for Spot_ID ${spotId}:`, error);
+      return "Unknown";
+    }
+  };
+
   const handleEndParking = async (recordId) => {
-    setUpdatingId(recordId); 
+    setUpdatingId(recordId);
     try {
       const response = await fetch(
         `https://spotcker.onrender.com/api/Parkings/updateParking/${recordId}`,
@@ -87,7 +102,6 @@ const Parkings = ({ route }) => {
         throw new Error('Failed to end parking session');
       }
 
-      
       setParkingRecords((prevRecords) =>
         prevRecords.map((record) =>
           record._id === recordId
@@ -102,39 +116,90 @@ const Parkings = ({ route }) => {
     } catch (error) {
       console.error('Error ending parking session:', error);
     } finally {
-      setUpdatingId(null); 
+      setUpdatingId(null);
     }
   };
 
-  const renderParkingRecord = ({ item }) => (
-    <View style={styles.recordContainer}>
-      <Text style={styles.recordTitle}>Parking Record</Text>
-      <Text style={styles.recordText}>
-        Location: {spotToLotMap[item.Spot_ID] || 'Unknown'}
-      </Text>
-      <Text style={styles.recordText}>Start: {item.Start_Date || 'Unknown'}</Text>
-      <Text style={styles.recordText}>
-        End: {item.End_Date ? item.End_Date : 'Ongoing'}
-      </Text>
-  
-      {!item.End_Date && (
-        <TouchableOpacity
-          style={styles.endButton}
-          onPress={() => handleEndParking(item._id)}
-          disabled={updatingId === item._id}
-        >
-          {updatingId === item._id ? (
-            <ActivityIndicator size="small" color="#fff" />
-          ) : (
-            <Text style={styles.endButtonText}>End Parking</Text>
-          )}
-        </TouchableOpacity>
-      )}
-    </View>
+  const handleDeleteParkingRecord = async (recordId) => {
+    try {
+      const response = await fetch(
+        `https://spotcker.onrender.com/api/Parkings/removeParking/${recordId}`,
+        {
+          method: 'DELETE',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to delete parking record');
+      }
+
+      setParkingRecords((prevRecords) =>
+        prevRecords.filter((record) => record._id !== recordId)
+      );
+    } catch (error) {
+      console.error('Error deleting parking record:', error);
+      Alert.alert('Error', 'Failed to delete parking record.');
+    }
+  };
+
+  const renderRightActions = (recordId) => (
+    <TouchableOpacity
+      style={styles.deleteButton}
+      onPress={() =>
+        Alert.alert(
+          'Delete Parking Record',
+          'Are you sure you want to delete this parking record?',
+          [
+            { text: 'Cancel', style: 'cancel' },
+            { text: 'Delete', style: 'destructive', onPress: () => handleDeleteParkingRecord(recordId) },
+          ]
+        )
+      }
+    >
+      <Text style={styles.deleteButtonText}>Delete</Text>
+    </TouchableOpacity>
   );
-  
+
+  const renderParkingRecord = ({ item }) => (
+    <Swipeable renderRightActions={() => renderRightActions(item._id)}>
+      <View style={styles.recordContainer}>
+        <Text style={styles.recordTitle}>{item.Lot_Name || 'Unknown Lot'}</Text>
+        <Text style={styles.recordText}>
+          <Text style={styles.boldText}>Start:</Text> {item.Start_Date || 'Unknown'}
+        </Text>
+        <Text style={styles.recordText}>
+          <Text style={styles.boldText}>End:</Text>{' '}
+          {item.End_Date ? item.End_Date : 'Ongoing'}
+        </Text>
+
+        {!item.End_Date && (
+          <TouchableOpacity
+            style={styles.endButton}
+            onPress={() => handleEndParking(item._id)}
+            disabled={updatingId === item._id}
+          >
+            {updatingId === item._id ? (
+              <ActivityIndicator size="small" color="#fff" />
+            ) : (
+              <Text style={styles.endButtonText}>End Parking</Text>
+            )}
+          </TouchableOpacity>
+        )}
+      </View>
+    </Swipeable>
+  );
+
+  if (loading) {
+    return (
+      <SafeAreaView style={styles.loaderContainer}>
+        <ActivityIndicator size="large" color="#6FADF5" />
+        <Text style={styles.loaderText}>Loading your parking records...</Text>
+      </SafeAreaView>
+    );
+  }
+
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       {parkingRecords.length > 0 ? (
         <FlatList
           data={parkingRecords}
@@ -147,7 +212,7 @@ const Parkings = ({ route }) => {
           <Text style={styles.noRecordsText}>No parking records found.</Text>
         </View>
       )}
-    </View>
+    </SafeAreaView>
   );
 };
 
@@ -166,9 +231,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 16,
     color: '#6FADF5',
-  },
-  listContainer: {
-    paddingBottom: 20,
   },
   recordContainer: {
     backgroundColor: '#FFF',
@@ -192,6 +254,10 @@ const styles = StyleSheet.create({
     color: '#555',
     marginBottom: 3,
   },
+  boldText: {
+    fontWeight: 'bold',
+    color: '#333',
+  },
   endButton: {
     backgroundColor: 'red',
     padding: 10,
@@ -204,15 +270,17 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: 'bold',
   },
-  noRecordsContainer: {
-    flex: 1,
+  deleteButton: {
+    backgroundColor: 'red',
     justifyContent: 'center',
     alignItems: 'center',
+    width: 75,
+    height: '100%',
   },
-  noRecordsText: {
-    fontSize: 16,
-    color: '#999',
+  deleteButtonText: {
+    color: 'white',
+    fontWeight: 'bold',
   },
 });
 
-export default Parkings;
+export default Profile;

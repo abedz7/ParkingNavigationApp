@@ -9,12 +9,12 @@ import {
 } from 'react-native';
 import MapView, { Marker } from 'react-native-maps';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { IconButton } from 'react-native-paper';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import * as Location from 'expo-location';
 import Parkings from '../MainScreens/Parkings';
-import Screen19 from '../MainScreens/Screen19';
 import Profile from '../MainScreens/Profile';
+import * as Notifications from '../../utils/notifications';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -35,6 +35,7 @@ const LocationScreen = ({ navigation, route }) => {
   const [loadingEnd, setLoadingEnd] = useState(false);
   const [reservations, setReservations] = useState({});
   const [cardLoading, setCardLoading] = useState(false);
+
 
 
   const { user } = route.params || {};
@@ -78,9 +79,9 @@ const LocationScreen = ({ navigation, route }) => {
   };
 
   const handleMarkerPress = async (parkingLot) => {
-    setCardLoading(true); // Start loading
+    setCardLoading(true);
     setSelectedParkingLot(parkingLot);
-  
+
     // Reset reservation state initially
     const reservation = reservations[parkingLot._id];
     if (reservation) {
@@ -92,14 +93,15 @@ const LocationScreen = ({ navigation, route }) => {
       setReservedSpot(null);
       setParkingRecordId(null);
     }
-  
+
     try {
       const response = await fetch(
         `https://spotcker.onrender.com/api/ParkingSpots/getParkingSpotsByLotName/${parkingLot.Name}`
       );
       const data = await response.json();
-  
+
       if (data.spots) {
+        // Count available spots by type
         const counts = data.spots.reduce(
           (acc, spot) => {
             acc.total = (acc.total || 0) + 1;
@@ -112,73 +114,178 @@ const LocationScreen = ({ navigation, route }) => {
           { total: 0, available: 0, Regular: 0, Mother: 0, DisabledPerson: 0 }
         );
         setSpotCounts(counts);
+
+        // Check if no spots are available
+        if (counts.available === 0) {
+          setIsReserved(false); 
+          setReservedSpot(null);
+          setParkingRecordId(null);
+          setModalMessage("No spots are available in this parking lot.");
+          setModalVisible(true);
+          return;
+        }
+
+        // Check user eligibility
+        const regularSpotsAvailable = counts.Regular > 0;
+        const momSpotsAvailable = counts.Mother > 0;
+        const disabledSpotsAvailable = counts.DisabledPerson > 0;
+
+        if (
+          (!regularSpotsAvailable && !momSpotsAvailable && user.IsMom === false) ||
+          (!regularSpotsAvailable && !disabledSpotsAvailable && user.HaveDisabledCertificate === false) ||
+          (!regularSpotsAvailable && !disabledSpotsAvailable && !momSpotsAvailable)
+        ) {
+          setIsReserved(false); 
+          setReservedSpot(null);
+          setParkingRecordId(null);
+          setModalMessage(
+            "You are not eligible to reserve a spot in this parking lot based on the available spots."
+          );
+          setModalVisible(true);
+        }
       }
     } catch (error) {
       console.error('Error fetching parking spots:', error);
     } finally {
-      setCardLoading(false); // Stop loading
+      setCardLoading(false); 
     }
   };
-  
+
+
 
   const handleReservation = async () => {
     if (!selectedParkingLot) {
-      console.error('No parking lot selected for reservation');
+      console.error("No parking lot selected for reservation");
       return;
     }
-  
+
     setIsLoading(true);
-  
+
     try {
+      // Fetch parking spots for the selected lot
       const response = await fetch(
-        'https://spotcker.onrender.com/api/Parkings/addParking',
+        `https://spotcker.onrender.com/api/ParkingSpots/getParkingSpotsByLotName/${selectedParkingLot.Name}`
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch parking spots");
+      }
+
+      const data = await response.json();
+
+      // Check if there are available spots
+      const availableSpots = data.spots.filter((spot) => spot.Is_Available);
+      if (availableSpots.length === 0) {
+        setModalMessage("No available spots in this parking lot");
+        setModalVisible(true);
+        return;
+      }
+
+      // Check user eligibility
+      const regularSpotsAvailable = availableSpots.some(
+        (spot) => spot.Spot_Type === "Regular"
+      );
+      const momSpotsAvailable = availableSpots.some(
+        (spot) => spot.Spot_Type === "Mother"
+      );
+      const disabledSpotsAvailable = availableSpots.some(
+        (spot) => spot.Spot_Type === "DisabledPerson"
+      );
+
+      if (
+        (!regularSpotsAvailable && !momSpotsAvailable && user.IsMom === false) ||
+        (!regularSpotsAvailable && !disabledSpotsAvailable && user.HaveDisabledCertificate === false) ||
+        (!regularSpotsAvailable && !disabledSpotsAvailable && !momSpotsAvailable)
+      ) {
+        setModalMessage(
+          "You are not eligible to reserve a spot in this parking lot based on the available spots."
+        );
+        setModalVisible(true);
+        return;
+      }
+
+      // Find a suitable spot for the user
+      let suitableSpot = null;
+      if (user.HaveDisabledCertificate && disabledSpotsAvailable) {
+        suitableSpot = availableSpots.find(
+          (spot) => spot.Spot_Type === "DisabledPerson"
+        );
+      } else if (user.IsMom && momSpotsAvailable) {
+        suitableSpot = availableSpots.find((spot) => spot.Spot_Type === "Mother");
+      } else if (regularSpotsAvailable) {
+        suitableSpot = availableSpots.find((spot) => spot.Spot_Type === "Regular");
+      }
+
+      if (!suitableSpot || !suitableSpot._id) {
+        setModalMessage("No suitable spots are available for reservation.");
+        setModalVisible(true);
+        return;
+      }
+
+      // Proceed with reservation
+      const parkingResponse = await fetch(
+        "https://spotcker.onrender.com/api/Parkings/addParking",
         {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
           body: JSON.stringify({
-            Spot_ID: selectedParkingLot._id,
+            Spot_ID: suitableSpot._id,
             User_ID: user._id,
             Start_Date: new Date().toISOString(),
             Start_Time: new Date().toLocaleTimeString(),
           }),
         }
       );
-  
-      if (!response.ok) {
-        throw new Error('Failed to create parking record');
+
+      if (!parkingResponse.ok) {
+        throw new Error("Failed to create parking record");
       }
-  
-      const data = await response.json();
-      const parkingId = data.addedParking?.insertedId;
+
+      const parkingData = await parkingResponse.json();
+      const parkingId = parkingData.addedParking?.insertedId;
+
       if (!parkingId) {
-        throw new Error('Failed to retrieve parking record ID from the response');
+        throw new Error("Failed to retrieve parking record ID from the response");
       }
-  
-      console.log('Parking Record Created:', parkingId);
-  
-      // Store reservation data for the selected lot
+
       setReservations((prevReservations) => ({
         ...prevReservations,
         [selectedParkingLot._id]: {
+          reservedSpot: suitableSpot,
           parkingRecordId: parkingId,
-          reservedSpot: selectedParkingLot,
         },
       }));
-  
+
       setParkingRecordId(parkingId);
-      setReservedSpot(selectedParkingLot);
+      setReservedSpot(suitableSpot);
       setIsReserved(true);
-      setModalMessage('Reservation successful!');
+
+      setModalMessage(
+        `Reservation successful! Reserved Spot: ${suitableSpot.Spot_Number}`
+      );
       setModalVisible(true);
+
+      
+      const permissionsGranted = await Notifications.requestNotificationPermissions();
+      if (permissionsGranted) {
+        await Notifications.scheduleNotification(
+          "End Your Reservation",
+          "Don't forget to end your reservation to avoid extra charges!",
+          60 
+        );
+      } else {
+        console.log("Notification permissions not granted");
+      }
     } catch (error) {
-      console.error('Error creating parking record:', error);
-      setModalMessage('Error creating parking record');
+      console.error("Error creating parking record:", error);
+      setModalMessage("Error creating parking record");
       setModalVisible(true);
     } finally {
       setIsLoading(false);
     }
   };
-  
+
+
   const endReservation = async () => {
     if (!parkingRecordId) {
       console.error('No parking record ID found');
@@ -206,18 +313,22 @@ const LocationScreen = ({ navigation, route }) => {
         throw new Error('Failed to update parking record');
       }
   
-      // Clear reservation for this lot
-      setReservations((prevReservations) => {
-        const updatedReservations = { ...prevReservations };
-        delete updatedReservations[selectedParkingLot._id];
-        return updatedReservations;
-      });
+      // Cancel notifications for this reservation
+      await Notifications.cancelAllNotifications();
   
+      
       setModalMessage('Reservation ended successfully!');
       setModalVisible(true);
       setIsReserved(false);
       setReservedSpot(null);
       setParkingRecordId(null);
+  
+      
+      setReservations((prevReservations) => {
+        const updatedReservations = { ...prevReservations };
+        delete updatedReservations[selectedParkingLot._id];
+        return updatedReservations;
+      });
     } catch (error) {
       console.error('Error ending reservation:', error);
       setModalMessage('Error ending reservation');
@@ -227,6 +338,8 @@ const LocationScreen = ({ navigation, route }) => {
     }
   };
   
+
+
 
   return (
     <View style={styles.container}>
@@ -258,8 +371,8 @@ const LocationScreen = ({ navigation, route }) => {
           )}
         </View>
       )}
-      
-  
+
+
       {selectedParkingLot && (
         <View style={styles.bottomSheet}>
           <TouchableOpacity
@@ -278,20 +391,8 @@ const LocationScreen = ({ navigation, route }) => {
           <Text style={styles.spotCountText}>
             Disabled Person Spots: {spotCounts.DisabledPerson}
           </Text>
-  
-          {isReserved ? (
-            <TouchableOpacity
-              style={styles.endButton}
-              onPress={endReservation}
-              disabled={loadingEnd}
-            >
-              {loadingEnd ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text style={styles.endButtonText}>End Park</Text>
-              )}
-            </TouchableOpacity>
-          ) : (
+
+          {!isReserved && (
             <TouchableOpacity
               style={[
                 styles.reserveButton,
@@ -307,9 +408,24 @@ const LocationScreen = ({ navigation, route }) => {
               )}
             </TouchableOpacity>
           )}
+
+          {isReserved && (
+            <TouchableOpacity
+              style={styles.endButton}
+              onPress={endReservation}
+              disabled={loadingEnd}
+            >
+              {loadingEnd ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={styles.endButtonText}>End Park</Text>
+              )}
+            </TouchableOpacity>
+          )}
+
         </View>
       )}
-  
+
       <Modal
         visible={modalVisible}
         transparent={true}
@@ -328,9 +444,10 @@ const LocationScreen = ({ navigation, route }) => {
           </View>
         </View>
       </Modal>
+
     </View>
   );
-};  
+};
 
 function HomeTabs({ user }) {
   return (
@@ -340,7 +457,6 @@ function HomeTabs({ user }) {
           let iconName;
           if (route.name === 'Location') iconName = 'map-marker';
           else if (route.name === 'Parkings') iconName = 'car';
-          else if (route.name === 'Notifications') iconName = 'bell';
           else if (route.name === 'Profile') iconName = 'user';
 
           return <FontAwesome name={iconName} size={size} color={color} />;
@@ -361,7 +477,6 @@ function HomeTabs({ user }) {
         initialParams={{ user }}
         options={{ headerShown: false }}
       />
-      <Tab.Screen name="Notifications" component={Screen19} options={{ headerShown: false }} />
       <Tab.Screen
         name="Profile"
         component={Profile}
@@ -533,7 +648,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#6FADF5',
   },
-  
+
 });
 
 export default HomeMap;
